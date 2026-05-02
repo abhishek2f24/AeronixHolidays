@@ -45,7 +45,7 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
 
         {/* Nav links — desktop */}
         <nav className="hidden md:flex items-center gap-6">
-          {["Features", "Pricing", "About"].map((item) => (
+          {["Features", "About"].map((item) => (
             <Link
               key={item}
               href={`/${item.toLowerCase()}`}

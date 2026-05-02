@@ -53,13 +53,6 @@
 - [x] `components/search-widget.tsx` — 5 tabs: Ask Odin (AI) / Flights / Hotels / Holidays / Experiences
 - [x] `app/page.tsx` — full landing page (hero, value props, destinations, pricing preview, testimonials, footer)
 
-### D3: Pricing + Stripe
-- [x] `app/pricing/page.tsx` — full pricing page with annual/monthly toggle
-- [x] `lib/stripe.ts` — lazy Stripe client factory
-- [x] `app/api/stripe/checkout/route.ts` — create Stripe Checkout session
-- [x] `app/api/stripe/webhook/route.ts` — handle subscription events → update Supabase tier
-- [x] `app/api/stripe/portal/route.ts` — Stripe Customer Portal redirect
-- [ ] **TODO: Create Razorpay account at razorpay.com**
 - [ ] **TODO: Fill in Razorpay keys in `.env.local`**
 
 ### D4: Member Dashboard
@@ -218,8 +211,9 @@ npm run dev
 
 ## Changelog & Decisions
 
-### 2026-05-02: Migrated from Stripe to Razorpay (One-Time Payments)
-- **Reason:** Stripe is currently invite-only in India. Switched to one-time payments as per user requirement.
-- **Action:** Replaced subscription-based logic with Razorpay Orders API.
-- **Impact:** Payments are now one-time instead of recurring. Updated schema to remove subscription-specific dependencies.
+### 2026-05-02: Pivoted to Professional Booking Model
+- **Reason:** Professional tourism sites (MakeMyTrip, Booking.com) operate on a per-booking basis, not subscriptions.
+- **Action:** Removed all subscription logic and pricing pages.
+- **UI:** Moved `SearchWidget` to the top of the Hero section for better conversion and a professional look.
+- **Future:** Payments will be handled at the point of booking for flights and hotels.
 
