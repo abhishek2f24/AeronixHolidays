@@ -5,23 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Shield, Clock, ChevronRight, Star, ArrowRight, Check } from "lucide-react";
 
-const VALUE_PROPS = [
-  {
-    icon: Sparkles,
-    title: "AI-Powered Precision",
-    body: "Odin builds complete itineraries — flights, hotels, transfers, and dining — from a single sentence. No more tab-fatigue.",
-  },
-  {
-    icon: Shield,
-    title: "Global Disruption Response",
-    body: "Flight cancelled? We rebook before you wake up. Our 24/7 team handles the logistics so you can stay in the moment.",
-  },
-  {
-    icon: Clock,
-    title: "Curated Luxury",
-    body: "Access exclusive hotel perks, room upgrades, and private transfers. Professional travel management, simplified.",
-  },
-];
+
 
 const DESTINATIONS = [
   { name: "Maldives",     region: "Indian Ocean", tag: "Overwater", img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80" },
@@ -76,28 +60,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── VALUE PROPS ── */}
-      <section className="py-24 px-4 bg-cream">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="font-display text-4xl sm:text-5xl font-semibold text-ink mb-4">Travel, rethought</h2>
-            <p className="text-stone text-lg max-w-xl mx-auto">
-              The tools of a personal travel manager, powered by AI, available to everyone.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {VALUE_PROPS.map((v) => (
-              <div key={v.title} className="bg-white rounded-2xl p-8 border border-stone/10 hover:shadow-lg transition-shadow">
-                <div className="w-11 h-11 rounded-xl bg-[#6b1f2a]/8 flex items-center justify-center mb-5">
-                  <v.icon className="w-5 h-5 text-oxblood" />
-                </div>
-                <h3 className="font-display text-xl font-semibold text-ink mb-2">{v.title}</h3>
-                <p className="text-stone text-sm leading-relaxed">{v.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── DESTINATIONS ── */}
       <section className="py-24 px-4 bg-white">
