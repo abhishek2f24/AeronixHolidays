@@ -1,206 +1,305 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Navigation } from "@/components/navigation";
+import { SearchWidget } from "@/components/search-widget";
+import { FlightCard } from "@/components/flight-card";
+import { HotelCard } from "@/components/hotel-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Hotel, Clock, ArrowRight, Filter, ChevronDown, Loader2 } from "lucide-react";
+import { Plane, Hotel, SlidersHorizontal, X, ChevronDown, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-function SearchResultsContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  
-  const type = searchParams.get("type") || "flight";
-  const from = searchParams.get("from");
-  const to = searchParams.get("to");
-  const depart = searchParams.get("depart");
-  const adults = searchParams.get("adults") || "1";
+type SortOption = "cheapest" | "fastest" | "earliest";
 
-  const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState<any[]>([]);
+function SearchResults() {
+  const params    = useSearchParams();
+  const type      = params.get("type")        ?? "flight";
+  const from      = params.get("from")        ?? "";
+  const to        = params.get("to")          ?? "";
+  const depart    = params.get("depart")      ?? "";
+  const returnD   = params.get("return")      ?? "";
+  const cabin     = params.get("cabin")       ?? "Economy";
+  const adults    = Number(params.get("adults")   ?? 1);
+  const dest      = params.get("destination") ?? "";
+  const checkIn   = params.get("checkIn")     ?? "";
+  const checkOut  = params.get("checkOut")    ?? "";
+  const rooms     = Number(params.get("rooms")    ?? 1);
+
+  const [offers,        setOffers]        = useState<any[]>([]);
+  const [hotels,        setHotels]        = useState<any[]>([]);
+  const [loading,       setLoading]       = useState(true);
+  const [error,         setError]         = useState("");
+  const [sort,          setSort]          = useState<SortOption>("cheapest");
+  const [showFilters,   setShowFilters]   = useState(false);
+  const [maxPrice,      setMaxPrice]      = useState(500000);
+  const [stopFilter,    setStopFilter]    = useState<string[]>([]);
+  const [airlineFilter, setAirlineFilter] = useState<string[]>([]);
+  const [starFilter,    setStarFilter]    = useState<number[]>([]);
 
   useEffect(() => {
-    async function fetchResults() {
-      setLoading(true);
-      try {
-        if (type === "flight") {
-          const res = await fetch("/api/search/flights", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ from, to, depart, adults: parseInt(adults) }),
-          });
-          const data = await res.json();
-          setResults(data.offers || []);
-        } else {
-          const res = await fetch("/api/search/hotels", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              destination: searchParams.get("destination"),
-              checkIn: searchParams.get("checkIn"),
-              checkOut: searchParams.get("checkOut"),
-              rooms: parseInt(searchParams.get("rooms") || "1"),
-              guests: parseInt(searchParams.get("guests") || "1")
-            }),
-          });
-          const data = await res.json();
-          setResults(data.hotels || []);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchResults();
-  }, [type, from, to, depart, adults]);
+    if (type === "flight" && from && to && depart) fetchFlights();
+    else if (type === "hotel" && dest && checkIn && checkOut) fetchHotels();
+    else setLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, from, to, depart, dest, checkIn, checkOut]);
+
+  async function fetchFlights() {
+    setLoading(true); setError("");
+    try {
+      const r = await fetch("/api/search/flights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ from, to, depart, returnDate: returnD, cabin, adults }),
+      });
+      const d = await r.json();
+      if (d.error) throw new Error(typeof d.error === "string" ? d.error : JSON.stringify(d.error));
+      setOffers(d.offers ?? []);
+    } catch (e: any) { setError(e.message); }
+    finally { setLoading(false); }
+  }
+
+  async function fetchHotels() {
+    setLoading(true); setError("");
+    try {
+      const r = await fetch("/api/search/hotels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ destination: dest, checkIn, checkOut, adults, rooms }),
+      });
+      const d = await r.json();
+      if (d.error) throw new Error(typeof d.error === "string" ? d.error : JSON.stringify(d.error));
+      setHotels(d.hotels ?? []);
+    } catch (e: any) { setError(e.message); }
+    finally { setLoading(false); }
+  }
+
+  const filteredFlights = offers
+    .filter((o) => {
+      if (o.total_amount > maxPrice) return false;
+      if (stopFilter.length > 0 && !stopFilter.includes(o.stops)) return false;
+      if (airlineFilter.length > 0 && !airlineFilter.includes(o.airline)) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sort === "cheapest") return a.total_amount - b.total_amount;
+      if (sort === "earliest") return a.departure.time.localeCompare(b.departure.time);
+      return 0;
+    });
+
+  const filteredHotels = hotels
+    .filter((h) => {
+      if (h.price_per_night && h.price_per_night > maxPrice) return false;
+      if (starFilter.length > 0 && !starFilter.includes(h.stars)) return false;
+      return true;
+    })
+    .sort((a, b) => sort === "cheapest" ? (a.price_per_night ?? 0) - (b.price_per_night ?? 0) : 0);
+
+  const airlineOptions = [...new Set(offers.map((o) => o.airline))];
+  const stopOptions    = [...new Set(offers.map((o) => o.stops))];
+  const resultCount    = type === "flight" ? filteredFlights.length : filteredHotels.length;
+
+  const formatINR = (n: number) =>
+    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6">
-      {/* Header / Summary */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-stone/10">
-        <div>
-          <h1 className="font-display text-2xl font-semibold text-ink mb-1 flex items-center gap-2">
-            {type === "flight" ? <Plane className="w-6 h-6" /> : <Hotel className="w-6 h-6" />}
-            {type === "flight" ? `${from} to ${to}` : `Hotels in ${searchParams.get("destination") || "Your Destination"}`}
-          </h1>
-          <p className="text-sm text-stone flex items-center gap-3">
-            <span>{depart}</span>
-            <span className="w-1 h-1 bg-stone/30 rounded-full" />
-            <span>{adults} Traveler{parseInt(adults) > 1 ? "s" : ""}</span>
-          </p>
-        </div>
-        <div className="mt-4 md:mt-0 flex gap-2">
-          <Button variant="outline" size="sm" className="rounded-lg h-9 text-xs">
-            <Filter className="w-3.5 h-3.5 mr-2" /> Filters
-          </Button>
-          <Button variant="outline" size="sm" className="rounded-lg h-9 text-xs">
-            Sort by: Lowest Price <ChevronDown className="w-3.5 h-3.5 ml-2" />
-          </Button>
+    <div className="min-h-screen bg-cream">
+      <Navigation />
+      {/* Sticky search bar */}
+      <div className="pt-16 bg-white border-b border-stone/10 sticky top-0 z-30 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          <SearchWidget />
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[240px_1fr] gap-8">
-        {/* Sidebar Filters (Desktop) */}
-        <aside className="hidden lg:block space-y-8">
-          <div>
-            <h3 className="text-sm font-semibold text-ink mb-4">Stops</h3>
-            <div className="space-y-2">
-              {["Non-stop", "1 Stop", "2+ Stops"].map(s => (
-                <label key={s} className="flex items-center gap-2 text-sm text-stone cursor-pointer hover:text-ink">
-                  <input type="checkbox" className="rounded border-stone/30 text-oxblood focus:ring-oxblood" /> {s}
-                </label>
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* Route + sort */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-ink">
+              {type === "flight"
+                ? <Plane className="w-4 h-4 text-oxblood" />
+                : <Hotel className="w-4 h-4 text-oxblood" />}
+              {type === "flight"
+                ? `${from.toUpperCase()} → ${to.toUpperCase()} · ${depart}`
+                : `Hotels in ${dest.toUpperCase()} · ${checkIn} – ${checkOut}`}
+            </div>
+            {!loading && (
+              <Badge className="bg-oxblood/10 text-oxblood border-transparent text-xs">
+                {resultCount} result{resultCount !== 1 ? "s" : ""}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}
+              className="md:hidden gap-1.5 border-stone/20 rounded-xl text-xs">
+              <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
+            </Button>
+            <div className="flex bg-white border border-stone/15 rounded-xl p-0.5">
+              {(["cheapest", "fastest", "earliest"] as SortOption[]).map((s) => (
+                <button key={s} onClick={() => setSort(s)}
+                  className={cn("px-3 py-1.5 text-xs font-medium rounded-lg capitalize transition-all",
+                    sort === s ? "bg-ink text-white shadow-sm" : "text-stone hover:text-ink")}>
+                  {s}
+                </button>
               ))}
             </div>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-ink mb-4">Airlines</h3>
-            <div className="space-y-2">
-              {["Emirates", "Qatar Airways", "Singapore Airlines", "Lufthansa"].map(a => (
-                <label key={a} className="flex items-center gap-2 text-sm text-stone cursor-pointer hover:text-ink">
-                  <input type="checkbox" className="rounded border-stone/30 text-oxblood focus:ring-oxblood" /> {a}
-                </label>
-              ))}
-            </div>
-          </div>
-        </aside>
+        </div>
 
-        {/* Results List */}
-        <div className="space-y-4">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-stone/10 border-dashed">
-              <Loader2 className="w-8 h-8 text-oxblood animate-spin mb-4" />
-              <p className="text-stone font-medium">Finding the best {type}s for you...</p>
-            </div>
-          ) : results.length > 0 ? (
-            results.map((res: any, i: number) => (
-              type === "flight" ? (
-                <div key={i} className="bg-white rounded-2xl border border-stone/10 p-5 hover:shadow-md transition-shadow">
-                  <div className="flex flex-col sm:flex-row items-center gap-6">
-                    <div className="w-12 h-12 bg-ivory rounded-lg flex items-center justify-center shrink-0">
-                      <Plane className="w-6 h-6 text-oxblood" />
-                    </div>
-                    <div className="flex-1 grid grid-cols-3 gap-4 text-center sm:text-left">
-                      <div>
-                        <p className="text-lg font-semibold text-ink">{res.departure.time}</p>
-                        <p className="text-xs text-stone uppercase font-medium">{res.departure.airport}</p>
+        <div className="flex gap-5">
+          {/* Filters sidebar */}
+          <aside className={cn("w-60 shrink-0 space-y-4 hidden md:block",
+            showFilters && "!block fixed inset-0 z-50 bg-white p-5 overflow-y-auto")}>
+            {showFilters && (
+              <div className="flex items-center justify-between mb-4 md:hidden">
+                <p className="font-semibold text-ink">Filters</p>
+                <button onClick={() => setShowFilters(false)}><X className="w-5 h-5" /></button>
+              </div>
+            )}
+
+            <FilterBox title="Max price">
+              <p className="text-oxblood font-semibold text-sm mb-2">{formatINR(maxPrice)}</p>
+              <input type="range" min={1000} max={type === "flight" ? 500000 : 200000}
+                step={500} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full accent-oxblood" />
+              <div className="flex justify-between text-[10px] text-stone mt-0.5">
+                <span>₹1,000</span><span>{type === "flight" ? "₹5,00,000" : "₹2,00,000"}</span>
+              </div>
+            </FilterBox>
+
+            {type === "flight" && stopOptions.length > 0 && (
+              <FilterBox title="Stops">
+                {stopOptions.map((s) => (
+                  <CheckRow key={s} label={s} checked={stopFilter.includes(s)}
+                    onChange={(v) => setStopFilter(v ? [...stopFilter, s] : stopFilter.filter((x) => x !== s))} />
+                ))}
+              </FilterBox>
+            )}
+
+            {type === "flight" && airlineOptions.length > 0 && (
+              <FilterBox title="Airlines">
+                {airlineOptions.map((a) => (
+                  <CheckRow key={a} label={a} checked={airlineFilter.includes(a)}
+                    onChange={(v) => setAirlineFilter(v ? [...airlineFilter, a] : airlineFilter.filter((x) => x !== a))} />
+                ))}
+              </FilterBox>
+            )}
+
+            {type === "hotel" && (
+              <FilterBox title="Star rating">
+                {[5, 4, 3, 2].map((s) => (
+                  <CheckRow key={s} label={`${s} Star`} checked={starFilter.includes(s)}
+                    onChange={(v) => setStarFilter(v ? [...starFilter, s] : starFilter.filter((x) => x !== s))} />
+                ))}
+              </FilterBox>
+            )}
+
+            <button onClick={() => { setMaxPrice(500000); setStopFilter([]); setAirlineFilter([]); setStarFilter([]); }}
+              className="text-xs text-oxblood hover:underline">
+              Reset filters
+            </button>
+          </aside>
+
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            {loading && (
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-stone/10 p-5 animate-pulse">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-stone/10 rounded-xl" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-5 bg-stone/10 rounded w-1/3" />
+                        <div className="h-3 bg-stone/8 rounded w-1/5" />
                       </div>
-                      <div className="flex flex-col items-center justify-center px-4">
-                        <p className="text-[10px] text-stone uppercase tracking-widest mb-1">{res.duration}</p>
-                        <div className="relative w-full h-px bg-stone/20">
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-stone/40 rounded-full" />
-                        </div>
-                        <p className="text-[10px] text-stone mt-1">{res.stops}</p>
+                      <div className="space-y-2 text-right">
+                        <div className="h-6 bg-stone/10 rounded w-24" />
+                        <div className="h-9 bg-stone/10 rounded-xl w-20" />
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-semibold text-ink">{res.arrival.time}</p>
-                        <p className="text-xs text-stone uppercase font-medium">{res.arrival.airport}</p>
-                      </div>
-                    </div>
-                    <div className="sm:pl-6 sm:border-l border-stone/10 text-center sm:text-right shrink-0">
-                      <p className="text-sm font-medium text-stone mb-1">{res.airline}</p>
-                      <p className="text-2xl font-bold text-ink mb-2">₹{res.total_amount.toLocaleString()}</p>
-                      <Button 
-                        onClick={() => window.open(res.deep_link || "https://www.skyscanner.co.in", "_blank")}
-                        className="bg-oxblood hover:bg-oxblood/90 text-white rounded-xl h-9 px-6 text-sm"
-                      >
-                        View Deal
-                      </Button>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div key={i} className="bg-white rounded-2xl border border-stone/10 p-4 hover:shadow-md transition-shadow flex gap-5">
-                  <img src={res.img} alt={res.name} className="w-32 h-32 rounded-xl object-cover shrink-0" />
-                  <div className="flex-1 flex flex-col justify-between py-1">
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-display text-lg font-semibold text-ink">{res.name}</h3>
-                        <Badge variant="secondary" className="bg-gold/10 text-gold border-transparent">★ {res.rating}</Badge>
-                      </div>
-                      <p className="text-sm text-stone">Luxury Suite · Free Wifi · Breakfast Included</p>
-                    </div>
-                    <div className="flex items-end justify-between">
-                      <p className="text-xs text-stone">Price for 1 night</p>
-                      <div className="text-right">
-                        <p className="text-xl font-bold text-ink">₹{(res.price * 85).toLocaleString()}</p>
-                        <Button 
-                          onClick={() => window.open(res.deep_link || "https://www.booking.com", "_blank")}
-                          className="bg-ink hover:bg-ink/90 text-white rounded-lg h-8 px-4 text-xs mt-1"
-                        >
-                          View Deal
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            ))
-          ) : (
-            <div className="py-20 text-center">
-              <p className="text-stone">No results found for your search. Try different dates or destinations.</p>
-            </div>
-          )}
+                ))}
+                <p className="text-center text-stone text-xs flex items-center justify-center gap-2 pt-1">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  {type === "flight"
+                    ? "Checking live fares from IndiGo, Air India, Vistara, SpiceJet…"
+                    : "Finding the best hotels at your destination…"}
+                </p>
+              </div>
+            )}
+
+            {!loading && error && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+                <p className="text-red-700 font-semibold text-sm mb-1">Search unavailable</p>
+                <p className="text-red-600 text-xs mb-4 max-w-md mx-auto">{error}</p>
+                <Button size="sm" variant="outline" className="border-red-200 text-red-600 text-xs"
+                  onClick={() => type === "flight" ? fetchFlights() : fetchHotels()}>
+                  Try again
+                </Button>
+              </div>
+            )}
+
+            {!loading && !error && resultCount === 0 && (
+              <div className="text-center py-20 bg-white rounded-2xl border border-stone/10">
+                <div className="text-5xl mb-4">{type === "flight" ? "✈️" : "🏨"}</div>
+                <p className="font-display text-xl font-semibold text-ink mb-2">No results found</p>
+                <p className="text-stone text-sm">Try adjusting your dates, route or removing filters.</p>
+              </div>
+            )}
+
+            {!loading && !error && type === "flight" && filteredFlights.length > 0 && (
+              <div className="space-y-3">
+                {filteredFlights.map((o) => <FlightCard key={o.id} offer={o} adults={adults} />)}
+              </div>
+            )}
+
+            {!loading && !error && type === "hotel" && filteredHotels.length > 0 && (
+              <div className="space-y-4">
+                {filteredHotels.map((h) => (
+                  <HotelCard key={h.id} hotel={h} checkIn={checkIn} checkOut={checkOut} adults={adults} rooms={rooms} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
+function FilterBox({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="bg-white rounded-xl border border-stone/10 overflow-hidden">
+      <button onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-ink">
+        {title} <ChevronDown className={cn("w-4 h-4 text-stone transition-transform", !open && "-rotate-90")} />
+      </button>
+      {open && <div className="px-4 pb-4 space-y-2">{children}</div>}
+    </div>
+  );
+}
+
+function CheckRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center gap-2.5 cursor-pointer group">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)}
+        className="w-3.5 h-3.5 accent-oxblood" />
+      <span className="text-xs text-stone group-hover:text-ink transition-colors">{label}</span>
+    </label>
+  );
+}
+
 export default function SearchPage() {
   return (
-    <>
-      <Navigation />
-      <main className="pt-24 pb-20 bg-cream min-h-screen">
-        <Suspense fallback={
-          <div className="flex items-center justify-center h-[60vh]">
-            <Loader2 className="w-10 h-10 text-oxblood animate-spin" />
-          </div>
-        }>
-          <SearchResultsContent />
-        </Suspense>
-      </main>
-    </>
+    <Suspense fallback={
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-oxblood animate-spin" />
+      </div>
+    }>
+      <SearchResults />
+    </Suspense>
   );
 }
