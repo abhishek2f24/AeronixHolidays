@@ -123,23 +123,24 @@ function SearchResultsContent() {
                     </div>
                     <div className="flex-1 grid grid-cols-3 gap-4 text-center sm:text-left">
                       <div>
-                        <p className="text-lg font-semibold text-ink">10:00</p>
-                        <p className="text-xs text-stone uppercase font-medium">{from}</p>
+                        <p className="text-lg font-semibold text-ink">{res.departure.time}</p>
+                        <p className="text-xs text-stone uppercase font-medium">{res.departure.airport}</p>
                       </div>
                       <div className="flex flex-col items-center justify-center px-4">
-                        <p className="text-[10px] text-stone uppercase tracking-widest mb-1">6h 45m</p>
+                        <p className="text-[10px] text-stone uppercase tracking-widest mb-1">{res.duration}</p>
                         <div className="relative w-full h-px bg-stone/20">
                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-stone/40 rounded-full" />
                         </div>
-                        <p className="text-[10px] text-stone mt-1">Non-stop</p>
+                        <p className="text-[10px] text-stone mt-1">{res.stops}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-semibold text-ink">16:45</p>
-                        <p className="text-xs text-stone uppercase font-medium">{to}</p>
+                        <p className="text-lg font-semibold text-ink">{res.arrival.time}</p>
+                        <p className="text-xs text-stone uppercase font-medium">{res.arrival.airport}</p>
                       </div>
                     </div>
                     <div className="sm:pl-6 sm:border-l border-stone/10 text-center sm:text-right shrink-0">
-                      <p className="text-2xl font-bold text-ink mb-1">₹{res.total_amount || "45,000"}</p>
+                      <p className="text-sm font-medium text-stone mb-1">{res.airline}</p>
+                      <p className="text-2xl font-bold text-ink mb-2">₹{res.total_amount.toLocaleString()}</p>
                       <Button className="bg-oxblood hover:bg-oxblood/90 text-white rounded-xl h-9 px-6 text-sm">
                         View Deals
                       </Button>
