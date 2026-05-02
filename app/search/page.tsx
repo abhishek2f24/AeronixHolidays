@@ -141,8 +141,11 @@ function SearchResultsContent() {
                     <div className="sm:pl-6 sm:border-l border-stone/10 text-center sm:text-right shrink-0">
                       <p className="text-sm font-medium text-stone mb-1">{res.airline}</p>
                       <p className="text-2xl font-bold text-ink mb-2">₹{res.total_amount.toLocaleString()}</p>
-                      <Button className="bg-oxblood hover:bg-oxblood/90 text-white rounded-xl h-9 px-6 text-sm">
-                        View Deals
+                      <Button 
+                        onClick={() => window.open(res.deep_link || "https://www.skyscanner.co.in", "_blank")}
+                        className="bg-oxblood hover:bg-oxblood/90 text-white rounded-xl h-9 px-6 text-sm"
+                      >
+                        View Deal
                       </Button>
                     </div>
                   </div>
@@ -161,8 +164,13 @@ function SearchResultsContent() {
                     <div className="flex items-end justify-between">
                       <p className="text-xs text-stone">Price for 1 night</p>
                       <div className="text-right">
-                        <p className="text-xl font-bold text-ink">₹{res.price * 85}</p>
-                        <Button className="bg-ink hover:bg-ink/90 text-white rounded-lg h-8 px-4 text-xs mt-1">Book Now</Button>
+                        <p className="text-xl font-bold text-ink">₹{(res.price * 85).toLocaleString()}</p>
+                        <Button 
+                          onClick={() => window.open(res.deep_link || "https://www.booking.com", "_blank")}
+                          className="bg-ink hover:bg-ink/90 text-white rounded-lg h-8 px-4 text-xs mt-1"
+                        >
+                          View Deal
+                        </Button>
                       </div>
                     </div>
                   </div>

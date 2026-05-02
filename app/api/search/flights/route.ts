@@ -18,7 +18,8 @@ export async function POST(req: Request) {
         arrival: { time: "08:15", airport: to.toUpperCase() },
         duration: "2h 15m",
         total_amount: 4250 * adults,
-        stops: "Non-stop"
+        stops: "Non-stop",
+        deep_link: "https://www.goindigo.in"
       },
       {
         id: "f2",
@@ -29,7 +30,8 @@ export async function POST(req: Request) {
         arrival: { time: "11:50", airport: to.toUpperCase() },
         duration: "2h 20m",
         total_amount: 5100 * adults,
-        stops: "Non-stop"
+        stops: "Non-stop",
+        deep_link: "https://www.airindia.in"
       },
       {
         id: "f3",
@@ -40,7 +42,8 @@ export async function POST(req: Request) {
         arrival: { time: "21:00", airport: to.toUpperCase() },
         duration: "2h 15m",
         total_amount: 6800 * adults,
-        stops: "Non-stop"
+        stops: "Non-stop",
+        deep_link: "https://www.airvistara.com"
       }
     ];
 

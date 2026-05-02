@@ -19,7 +19,8 @@ export async function POST(req: Request) {
       rating: 4.9,
       img: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80",
       description: "Legendary service in the heart of the city.",
-      amenities: ["Free WiFi", "Pool", "Spa", "Airport Transfer"]
+      amenities: ["Free WiFi", "Pool", "Spa", "Airport Transfer"],
+      deep_link: "https://www.booking.com/hotel/in/the-oberoi-new-delhi.html"
     },
     {
       id: "h2",
@@ -29,7 +30,8 @@ export async function POST(req: Request) {
       rating: 4.8,
       img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80",
       description: "Majestic luxury with world-class dining.",
-      amenities: ["Free WiFi", "Gym", "Lounge", "Valet Parking"]
+      amenities: ["Free WiFi", "Gym", "Lounge", "Valet Parking"],
+      deep_link: "https://www.tajhotels.com/en-in/taj/taj-palace-new-delhi/"
     },
     {
       id: "h3",
@@ -39,7 +41,8 @@ export async function POST(req: Request) {
       rating: 5.0,
       img: "https://images.unsplash.com/photo-1551882547-ff43c63faf76?w=600&q=80",
       description: "Opulence and grandeur at its finest.",
-      amenities: ["Free WiFi", "Butler Service", "Rooftop Pool"]
+      amenities: ["Free WiFi", "Butler Service", "Rooftop Pool"],
+      deep_link: "https://www.theleela.com/the-leela-palace-new-delhi"
     }
   ];
 

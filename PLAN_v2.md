@@ -81,64 +81,29 @@
 
 ---
 
-## Week 2 — Core product (Days 8–14)
+## Phase 1 — Flight & Hotel Metasearch (Model A)
+- [x] **D1–D7:** Foundation & UI (Complete)
+- [/] **D8–D14:** Metasearch Optimization
+    - [x] Build `app/search/page.tsx` — Comparison UI (Complete)
+    - [ ] Implement redirect logic to OTA/Airline partners
+    - [ ] Add real affiliate APIs (Amadeus/Skyscanner)
+    - [ ] Build flight filters (price range, stops, departure time)
+- [ ] **D15–D21:** Affiliate & Notifications
+    - [ ] Integration with affiliate deep-links
+    - [ ] Price alerts (Email/Push)
+    - [ ] Simple `/admin` to track lead clicks
+- [ ] **D22–D30:** Content & Polish
+    - [ ] 3 SEO destination pages (`/destinations/bali`, `/destinations/paris`, `/destinations/maldives`)
+    - [ ] OG image & SEO optimization
+    - [ ] Deploy to Vercel production
 
-- [ ] **D8:** Fill real env vars → `npm run dev` → verify sign-up works end-to-end
-- [ ] **D9:** Build `app/(member)/search/page.tsx` — flight search results UI (cards with airline, price, stops, times)
-- [ ] **D9:** Build flight filters (price range, stops, departure time)
-- [ ] **D10:** Fare lock: "Lock price" button → save to `fare_locks` table (24h expiry)
-- [ ] **D10:** Build `app/(member)/trips/page.tsx` — booking list with status badges
-- [ ] **D11:** Build `app/(member)/trips/[id]/page.tsx` — booking detail page
-- [ ] **D12:** Complete flight booking flow: passenger details form → Stripe payment intent → Duffel order
-- [ ] **D12:** Booking confirmation email via Resend
-- [ ] **D13:** Build `app/(member)/settings/page.tsx` — profile edit + Stripe portal link
-- [ ] **D14:** Mobile responsiveness pass (test all flows on 375px screen)
-
----
-
-## Week 3 — Booking + Notifications (Days 15–21)
-
-- [ ] `app/api/bookings/route.ts` — full booking creation (Duffel → Supabase → Resend email)
-- [ ] Atlas subscription welcome email template
-- [ ] Payment-failed email template
-- [ ] Booking cancellation flow
-- [ ] Simple `/admin` page (env-var-protected) — show user count by tier, recent bookings, open requests
-- [ ] Sentry error tracking setup
-- [ ] Posthog analytics setup
-
----
-
-## Week 4 — Polish + First Users (Days 22–30)
-
-- [ ] Error/loading/empty states on all key screens
-- [ ] OG image for landing page (Vercel OG)
-- [ ] 3 SEO destination pages (`/destinations/bali`, `/destinations/paris`, `/destinations/maldives`)
-- [ ] Vercel Cron: expire fare locks daily
-- [ ] Price alerts: "Notify me" button → save to `price_alerts`
-- [ ] Manual invite system (toggle landing page to invite-only)
-- [ ] End-to-end test with real Stripe test cards
-- [ ] Deploy to Vercel with real env vars
-- [ ] Send 20 personal invites
-
----
-
-## Phase 2 — Build when you have 20 paying users
-
-> Don't touch these until revenue > $1,000/month
-
-- [ ] Native mobile app (Expo + React Native)
+## Phase 2 — Full OTA Booking Engine (Model B)
+> Implement ONLY after Model A is profitable and regulated.
+- [ ] GDS contracts & Ticketing agreements
+- [ ] Payment reconciliation & PNR handling
+- [ ] Refund management flow
 - [ ] Full hotel booking engine (Expedia Rapid API)
 - [ ] Disruption recovery automation (FlightAware API)
-- [ ] Loyalty points system
-- [ ] Referral program
-- [ ] Group trip / split payments
-- [ ] Price prediction "buy now / wait"
-- [ ] Corporate travel module
-- [ ] Full admin panel (replace Supabase dashboard)
-- [ ] Lifecycle email automation (Customer.io)
-- [ ] Segment.io + Snowflake analytics
-- [ ] KMS/multi-region/SOC 2 compliance
-- [ ] NestJS microservices (v1 architecture)
 
 ---
 
@@ -211,9 +176,8 @@ npm run dev
 
 ## Changelog & Decisions
 
-### 2026-05-02: Pivoted to Professional Booking Model
-- **Reason:** Professional tourism sites (MakeMyTrip, Booking.com) operate on a per-booking basis, not subscriptions.
-- **Action:** Removed all subscription logic and pricing pages.
-- **UI:** Moved `SearchWidget` to the top of the Hero section for better conversion and a professional look.
-- **Future:** Payments will be handled at the point of booking for flights and hotels.
+### 2026-05-02: Adopted Model A (Metasearch) Strategy
+- **Decision:** Prioritize Flight Metasearch over Full OTA to minimize regulatory and technical overhead.
+- **Action:** Updated roadmap to focus on search comparison and affiliate redirection.
+- **Architecture:** Search results will now lead to external partner redirects instead of internal checkout.
 
