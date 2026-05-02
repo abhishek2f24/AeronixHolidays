@@ -49,35 +49,30 @@ export default function HomePage() {
       <Navigation transparent />
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[90vh] flex flex-col items-center pt-32 pb-16 px-4 overflow-hidden bg-ink">
+      <section className="relative flex flex-col items-center pt-24 pb-12 px-4 overflow-hidden bg-ink">
         <div className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-oxblood/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-900/30 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-oxblood/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-900/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative z-10 text-center mb-12 max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-white/10 text-white border-white/20 text-xs font-medium px-4 py-1.5 backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 mr-2 text-gold animate-pulse" />
-            The Future of Professional Travel
-          </Badge>
-          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold text-white leading-[1.05] mb-6 tracking-tight">
-            Luxury travel,<br />
-            <span className="text-gold">redefined by AI.</span>
+        <div className="relative z-10 text-center mb-8 max-w-4xl mx-auto">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-semibold text-white leading-tight mb-4 tracking-tight">
+            Luxury travel, <span className="text-gold">redefined by AI.</span>
           </h1>
-          <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
             From instant itineraries to 24/7 disruption response. Aeronix Holidays combines 
             next-gen AI with professional concierge expertise.
           </p>
         </div>
 
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-0 sm:px-4 mb-8">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-0 sm:px-4 mb-10">
           <SearchWidget />
         </div>
 
-        <div className="relative z-10 flex flex-wrap items-center justify-center gap-8 text-white/40 text-xs uppercase tracking-widest font-medium">
-          <span className="flex items-center gap-2"><Shield className="w-3.5 h-3.5" /> No Booking Fees</span>
-          <span className="flex items-center gap-2"><Clock className="w-3.5 h-3.5" /> 24/7 Support</span>
-          <span className="flex items-center gap-2"><Star className="w-3.5 h-3.5" /> Exclusive Perks</span>
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-8 text-white/40 text-[10px] uppercase tracking-[0.2em] font-medium">
+          <span className="flex items-center gap-2"><Shield className="w-3 h-3" /> No Booking Fees</span>
+          <span className="flex items-center gap-2"><Clock className="w-3 h-3" /> 24/7 Support</span>
+          <span className="flex items-center gap-2"><Star className="w-3 h-3" /> Exclusive Perks</span>
         </div>
       </section>
 
