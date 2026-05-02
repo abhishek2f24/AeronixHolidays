@@ -60,7 +60,6 @@
 - [x] `app/api/stripe/webhook/route.ts` — handle subscription events → update Supabase tier
 - [x] `app/api/stripe/portal/route.ts` — Stripe Customer Portal redirect
 - [ ] **TODO: Create Razorpay account at razorpay.com**
-- [ ] **TODO: Create Atlas annual + monthly + Odyssey annual plans in Razorpay**
 - [ ] **TODO: Fill in Razorpay keys in `.env.local`**
 
 ### D4: Member Dashboard
@@ -219,8 +218,8 @@ npm run dev
 
 ## Changelog & Decisions
 
-### 2026-05-02: Migrated from Stripe to Razorpay
-- **Reason:** Stripe is currently invite-only in India, which blocks immediate MVP deployment.
-- **Action:** Replaced `lib/stripe.ts` and `app/api/stripe/*` with Razorpay equivalents.
-- **Impact:** Frontend needs to integrate Razorpay Checkout modal instead of Stripe Checkout redirect.
+### 2026-05-02: Migrated from Stripe to Razorpay (One-Time Payments)
+- **Reason:** Stripe is currently invite-only in India. Switched to one-time payments as per user requirement.
+- **Action:** Replaced subscription-based logic with Razorpay Orders API.
+- **Impact:** Payments are now one-time instead of recurring. Updated schema to remove subscription-specific dependencies.
 

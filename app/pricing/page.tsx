@@ -77,15 +77,17 @@ export default function PricingPage() {
 
     const data = await res.json();
     
-    if (data.subscription_id) {
+    if (data.order_id) {
       const options = {
         key: data.key_id,
-        subscription_id: data.subscription_id,
+        amount: data.amount,
+        currency: data.currency,
         name: data.name,
         description: data.description,
+        order_id: data.order_id,
         prefill: data.prefill,
         handler: function (response: any) {
-          router.push(`/dashboard?upgraded=1&sub=${response.razorpay_subscription_id}`);
+          router.push(`/dashboard?upgraded=1&payment_id=${response.razorpay_payment_id}`);
         },
         theme: { color: "#1C1C1C" },
       };

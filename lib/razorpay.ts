@@ -7,10 +7,10 @@ export function getRazorpay() {
   });
 }
 
-export const PLANS = {
-  atlas_annual:   process.env.RAZORPAY_ATLAS_ANNUAL_PLAN_ID!,
-  atlas_monthly:  process.env.RAZORPAY_ATLAS_MONTHLY_PLAN_ID!,
-  odyssey_annual: process.env.RAZORPAY_ODYSSEY_ANNUAL_PLAN_ID!,
+export const PRICES = {
+  atlas_annual:   parseInt(process.env.RAZORPAY_ATLAS_ANNUAL_PRICE || "48000"),
+  atlas_monthly:  parseInt(process.env.RAZORPAY_ATLAS_MONTHLY_PRICE || "4900"),
+  odyssey_annual: parseInt(process.env.RAZORPAY_ODYSSEY_ANNUAL_PRICE || "480000"),
 } as const;
 
-export type PlanKey = keyof typeof PLANS;
+export type PlanKey = keyof typeof PRICES;

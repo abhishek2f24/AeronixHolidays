@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
-import { getRazorpay } from "@/lib/razorpay";
 import { createClient } from "@/lib/supabase/server";
 import crypto from "crypto";
 
@@ -21,24 +20,18 @@ export async function POST(req: Request) {
   const event = JSON.parse(body);
   const supabase = await createClient();
 
-  if (event.event === "subscription.activated" || event.event === "subscription.charged") {
-    const sub = event.payload.subscription.entity;
-    const notes = sub.notes;
+  // For one-time payments, we look for order.paid or payment.captured
+  if (event.event === "order.paid") {
+    const order = event.payload.order.entity;
+    const notes = order.notes;
     const userId = notes.supabase_user_id;
     const plan   = notes.plan ?? "";
     const tier   = plan.startsWith("odyssey") ? "odyssey" : plan.startsWith("atlas") ? "atlas" : "voyager";
 
     await supabase.from("profiles").update({
       tier,
-      razorpay_subscription_id: sub.id,
-      subscription_status: sub.status,
+      subscription_status: "active", // For one-time, we can just mark it active
     }).eq("id", userId);
-  }
-
-  if (event.event === "subscription.cancelled") {
-    const sub = event.payload.subscription.entity;
-    const userId = sub.notes.supabase_user_id;
-    await supabase.from("profiles").update({ tier: "voyager", subscription_status: "cancelled" }).eq("id", userId);
   }
 
   return NextResponse.json({ received: true });
