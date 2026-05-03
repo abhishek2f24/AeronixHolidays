@@ -1,6 +1,6 @@
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
-import { ArrowLeft, Calendar, User, Clock, Share2, Facebook, Twitter, Link as LinkIcon } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, Globe, Mail, Link as LinkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -85,10 +85,10 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-bold text-stone uppercase tracking-widest mr-2">Share</span>
                   <button className="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center hover:bg-oxblood hover:text-white hover:border-oxblood transition-all">
-                    <Facebook className="w-4 h-4" />
+                    <Globe className="w-4 h-4" />
                   </button>
                   <button className="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center hover:bg-oxblood hover:text-white hover:border-oxblood transition-all">
-                    <Twitter className="w-4 h-4" />
+                    <Mail className="w-4 h-4" />
                   </button>
                   <button className="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center hover:bg-oxblood hover:text-white hover:border-oxblood transition-all">
                     <LinkIcon className="w-4 h-4" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from "react";
+import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
 import { saveSearch } from "@/lib/local-history";
 import { Navigation } from "@/components/navigation";
@@ -131,8 +132,6 @@ function SearchResults() {
   function scrollToSearch() {
     searchRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-
-import { toast } from "sonner";
 
   async function handleTrackPrice() {
     try {

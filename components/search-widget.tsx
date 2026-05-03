@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Plane, Hotel, Palmtree, Ticket,
@@ -70,8 +71,6 @@ function FlightsForm() {
   const [cabin, setCabin] = useState("ECONOMY");
   const [adults, setAdults] = useState("1");
   const [nonStop, setNonStop] = useState(false);
-
-import { toast } from "sonner";
 
   function handleSearch() {
     const params = new URLSearchParams({ type: "flight", cabin, adults });

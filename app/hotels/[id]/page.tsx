@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/navigation";
+import { WeatherWidget } from "@/components/weather-widget";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Wifi, Coffee, Car, Shield, Wind, Tv, Check, Share2, Heart } from "lucide-react";
@@ -120,8 +121,6 @@ export default function HotelDetailPage() {
               </div>
             </section>
           </div>
-
-import { WeatherWidget } from "@/components/weather-widget";
 
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">

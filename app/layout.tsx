@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { CookieConsent } from "@/components/cookie-consent";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -42,8 +45,6 @@ export const metadata: Metadata = {
     images: ["https://aeronixholidays.com/og-image.jpg"],
   },
 };
-
-import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
