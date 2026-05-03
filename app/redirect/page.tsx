@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Navigation } from "@/components/navigation";
 import { Loader2, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { clearPendingBooking } from "@/lib/local-history";
 
 function RedirectContent() {
   const searchParams = useSearchParams();
@@ -29,6 +30,9 @@ function RedirectContent() {
     }
 
     logRedirect();
+
+    // User is heading to partner to complete the booking — clear the "pending" state
+    clearPendingBooking();
 
     // Artificial delay for premium feel
     const timer = setTimeout(() => {

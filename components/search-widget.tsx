@@ -58,86 +58,171 @@ function SearchBtn({ label, onClick }: { label: string; onClick: () => void }) {
   );
 }
 
+import { LocationAutocomplete } from "@/components/location-autocomplete";
+import { Checkbox } from "@/components/ui/checkbox";
+
 function FlightsForm() {
   const router = useRouter();
-  const [tripType, setTripType] = useState<"round" | "oneway">("round");
-  const [from, setFrom]         = useState("");
-  const [to, setTo]             = useState("");
-  const [depart, setDepart]     = useState("");
-  const [returnD, setReturnD]   = useState("");
-  const [cabin, setCabin]       = useState("ECONOMY");
-  const [adults, setAdults]     = useState("1");
+  const [tripType, setTripType] = useState<"round" | "oneway" | "multi">("round");
+  const [segments, setSegments] = useState([{ from: "", to: "", date: "" }]);
+  const [roundTrip, setRoundTrip] = useState({ from: "", to: "", depart: "", return: "" });
+  const [oneWay, setOneWay] = useState({ from: "", to: "", depart: "" });
+  const [cabin, setCabin] = useState("ECONOMY");
+  const [adults, setAdults] = useState("1");
+  const [nonStop, setNonStop] = useState(false);
+
+import { toast } from "sonner";
 
   function handleSearch() {
-    if (!from || !to || !depart) { alert("Please fill in origin, destination, and departure date."); return; }
-    const params = new URLSearchParams({
-      type: "flight", from: from.toUpperCase(), to: to.toUpperCase(),
-      depart, cabin, adults,
-    });
-    if (tripType === "round" && returnD) params.set("return", returnD);
+    const params = new URLSearchParams({ type: "flight", cabin, adults });
+    if (nonStop) params.set("nonStop", "true");
+
+    if (tripType === "round") {
+      if (!roundTrip.from || !roundTrip.to || !roundTrip.depart) { 
+        toast.error("Please fill in origin, destination, and departure date."); 
+        return; 
+      }
+      params.set("from", roundTrip.from.toUpperCase());
+      params.set("to", roundTrip.to.toUpperCase());
+      params.set("depart", roundTrip.depart);
+      if (roundTrip.return) params.set("return", roundTrip.return);
+    } else if (tripType === "oneway") {
+      if (!oneWay.from || !oneWay.to || !oneWay.depart) { 
+        toast.error("Please fill in origin, destination, and departure date."); 
+        return; 
+      }
+      params.set("from", oneWay.from.toUpperCase());
+      params.set("to", oneWay.to.toUpperCase());
+      params.set("depart", oneWay.depart);
+    } else {
+      // Multi-city
+      if (segments.some(s => !s.from || !s.to || !s.date)) {
+        toast.error("Please fill in all flight details for your multi-city journey.");
+        return;
+      }
+      const multi = segments.map(s => `${s.from.toUpperCase()}-${s.to.toUpperCase()}-${s.date}`).join(",");
+      params.set("multi", multi);
+    }
     router.push(`/search?${params}`);
   }
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        {(["round", "oneway"] as const).map((val) => (
-          <button key={val} onClick={() => setTripType(val)}
-            className={cn("px-4 py-1.5 rounded-lg text-[10px] uppercase tracking-[0.2em] font-bold border transition-all",
-              tripType === val ? "bg-[#6B1F2A] text-white border-[#6B1F2A]" : "bg-white text-[#8C8782] border-[#E5E1DA] hover:border-[#C5A059]"
-            )}>
-            {val === "round" ? "Round-trip" : "One-way"}
-          </button>
-        ))}
-      </div>
+  const addSegment = () => setSegments([...segments, { from: "", to: "", date: "" }]);
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <Field label="From">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059] pointer-events-none" />
-            <input value={from} onChange={e => setFrom(e.target.value)} type="text" placeholder="City or IATA (DEL)" className={cn(INPUT, "pl-9")} />
-          </div>
-        </Field>
-        <Field label="To">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8C8782] pointer-events-none" />
-            <input value={to} onChange={e => setTo(e.target.value)} type="text" placeholder="City or IATA (LHR)" className={cn(INPUT, "pl-9")} />
-          </div>
-        </Field>
-        <Field label="Departure Date">
-          <input type="date" value={depart} onChange={e => setDepart(e.target.value)} className={INPUT} />
-        </Field>
-        <Field label={tripType === "round" ? "Return Date" : "Passengers & Class"}>
-          {tripType === "round"
-            ? <input type="date" value={returnD} onChange={e => setReturnD(e.target.value)} className={INPUT} />
-            : <select value={`${adults}|${cabin}`} onChange={e => { const [a, c] = e.target.value.split("|"); setAdults(a); setCabin(c); }} className={SELECT}>
-                <option value="1|ECONOMY">1 Adult · Economy</option>
-                <option value="2|ECONOMY">2 Adults · Economy</option>
-                <option value="1|BUSINESS">1 Adult · Business</option>
-                <option value="2|BUSINESS">2 Adults · Business</option>
-                <option value="1|FIRST">1 Adult · First Class</option>
-              </select>
-          }
-        </Field>
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex gap-2">
+          {(["round", "oneway", "multi"] as const).map((val) => (
+            <button key={val} onClick={() => setTripType(val)}
+              className={cn("px-4 py-1.5 rounded-lg text-[10px] uppercase tracking-[0.2em] font-bold border transition-all",
+                tripType === val ? "bg-[#6B1F2A] text-white border-[#6B1F2A]" : "bg-white text-[#8C8782] border-[#E5E1DA] hover:border-[#C5A059]"
+              )}>
+              {val === "round" ? "Round-trip" : val === "oneway" ? "One-way" : "Multi-city"}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <div className={cn("w-4 h-4 rounded border border-[#E5E1DA] flex items-center justify-center transition-all", nonStop ? "bg-[#6B1F2A] border-[#6B1F2A]" : "bg-white")}>
+              {nonStop && <Check className="w-3 h-3 text-white" />}
+            </div>
+            <input type="checkbox" checked={nonStop} onChange={e => setNonStop(e.target.checked)} className="hidden" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[#8C8782] group-hover:text-ink">Non-stop only</span>
+          </label>
+        </div>
       </div>
 
       {tripType === "round" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <Field label="Passengers & Class">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <Field label="From">
+            <LocationAutocomplete value={roundTrip.from} onChange={v => setRoundTrip({...roundTrip, from: v})} placeholder="Origin" mode="iata" />
+          </Field>
+          <Field label="To">
+            <LocationAutocomplete value={roundTrip.to} onChange={v => setRoundTrip({...roundTrip, to: v})} placeholder="Destination" mode="iata" />
+          </Field>
+          <Field label="Departure">
+            <input type="date" value={roundTrip.depart} onChange={e => setRoundTrip({...roundTrip, depart: e.target.value})} className={INPUT} />
+          </Field>
+          <Field label="Return">
+            <input type="date" value={roundTrip.return} onChange={e => setRoundTrip({...roundTrip, return: e.target.value})} className={INPUT} />
+          </Field>
+          <Field label="Passengers">
             <select value={`${adults}|${cabin}`} onChange={e => { const [a, c] = e.target.value.split("|"); setAdults(a); setCabin(c); }} className={SELECT}>
               <option value="1|ECONOMY">1 Adult · Economy</option>
               <option value="2|ECONOMY">2 Adults · Economy</option>
               <option value="1|BUSINESS">1 Adult · Business</option>
               <option value="2|BUSINESS">2 Adults · Business</option>
-              <option value="1|FIRST">1 Adult · First Class</option>
+              <option value="1|FIRST">1 Adult · First</option>
             </select>
           </Field>
-          <div className="flex items-end">
-            <SearchBtn label="Search Flights" onClick={handleSearch} />
+        </div>
+      )}
+
+      {tripType === "oneway" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Field label="From">
+            <LocationAutocomplete value={oneWay.from} onChange={v => setOneWay({...oneWay, from: v})} placeholder="Origin" mode="iata" />
+          </Field>
+          <Field label="To">
+            <LocationAutocomplete value={oneWay.to} onChange={v => setOneWay({...oneWay, to: v})} placeholder="Destination" mode="iata" />
+          </Field>
+          <Field label="Departure">
+            <input type="date" value={oneWay.depart} onChange={e => setOneWay({...oneWay, depart: e.target.value})} className={INPUT} />
+          </Field>
+          <Field label="Passengers">
+            <select value={`${adults}|${cabin}`} onChange={e => { const [a, c] = e.target.value.split("|"); setAdults(a); setCabin(c); }} className={SELECT}>
+              <option value="1|ECONOMY">1 Adult · Economy</option>
+              <option value="2|ECONOMY">2 Adults · Economy</option>
+              <option value="1|BUSINESS">1 Adult · Business</option>
+              <option value="2|BUSINESS">2 Adults · Business</option>
+              <option value="1|FIRST">1 Adult · First</option>
+            </select>
+          </Field>
+        </div>
+      )}
+
+      {tripType === "multi" && (
+        <div className="space-y-4">
+          {segments.map((seg, i) => (
+            <div key={i} className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 items-end">
+              <Field label={`Flight ${i+1} From`}>
+                <LocationAutocomplete value={seg.from} onChange={v => {
+                  const n = [...segments]; n[i].from = v; setSegments(n);
+                }} placeholder="Origin" mode="iata" />
+              </Field>
+              <Field label="To">
+                <LocationAutocomplete value={seg.to} onChange={v => {
+                  const n = [...segments]; n[i].to = v; setSegments(n);
+                }} placeholder="Destination" mode="iata" />
+              </Field>
+              <Field label="Date">
+                <input type="date" value={seg.date} onChange={e => {
+                  const n = [...segments]; n[i].date = e.target.value; setSegments(n);
+                }} className={INPUT} />
+              </Field>
+              {i === segments.length - 1 && segments.length < 4 && (
+                <Button variant="ghost" onClick={addSegment} className="h-12 border border-dashed border-[#E5E1DA] text-[#6B1F2A] font-bold text-[10px] uppercase tracking-widest">
+                  + Add Flight
+                </Button>
+              )}
+            </div>
+          ))}
+          <div className="pt-2">
+            <Field label="Passengers & Class">
+              <select value={`${adults}|${cabin}`} onChange={e => { const [a, c] = e.target.value.split("|"); setAdults(a); setCabin(c); }} className={cn(SELECT, "max-w-xs")}>
+                <option value="1|ECONOMY">1 Adult · Economy</option>
+                <option value="2|ECONOMY">2 Adults · Economy</option>
+                <option value="1|BUSINESS">1 Adult · Business</option>
+                <option value="2|BUSINESS">2 Adults · Business</option>
+              </select>
+            </Field>
           </div>
         </div>
       )}
-      {tripType === "oneway" && <SearchBtn label="Search Flights" onClick={handleSearch} />}
+
+      <div className="flex justify-center sm:justify-end">
+        <SearchBtn label="Search Flights" onClick={handleSearch} />
+      </div>
     </div>
   );
 }
@@ -150,7 +235,10 @@ function HotelsForm() {
   const [guests, setGuests]   = useState("1|1");
 
   function handleSearch() {
-    if (!dest || !checkIn || !checkOut) { alert("Please fill in destination, check-in and check-out dates."); return; }
+    if (!dest || !checkIn || !checkOut) { 
+      toast.error("Please fill in destination, check-in, and check-out dates."); 
+      return; 
+    }
     const [adults, rooms] = guests.split("|");
     router.push(`/search?type=hotel&destination=${encodeURIComponent(dest)}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&rooms=${rooms}`);
   }
@@ -159,10 +247,7 @@ function HotelsForm() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Field label="Destination">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059] pointer-events-none" />
-            <input value={dest} onChange={e => setDest(e.target.value)} type="text" placeholder="City or Hotel" className={cn(INPUT, "pl-9")} />
-          </div>
+          <LocationAutocomplete value={dest} onChange={v => setDest(v)} placeholder="City or Hotel" mode="city" />
         </Field>
         <Field label="Check-in">
           <input type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} className={INPUT} />
@@ -203,10 +288,7 @@ function HolidaysForm() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Field label="Destination">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059] pointer-events-none" />
-            <input value={dest} onChange={e => setDest(e.target.value)} type="text" placeholder="e.g. Maldives, Europe" className={cn(INPUT, "pl-9")} />
-          </div>
+          <LocationAutocomplete value={dest} onChange={v => setDest(v)} placeholder="e.g. Maldives, Europe" mode="city" />
         </Field>
         <Field label="Travel Date">
           <input type="date" value={date} onChange={e => setDate(e.target.value)} className={INPUT} />
@@ -255,10 +337,7 @@ function ExperiencesForm() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Field label="Location">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059] pointer-events-none" />
-            <input value={location} onChange={e => setLocation(e.target.value)} type="text" placeholder="City or Country" className={cn(INPUT, "pl-9")} />
-          </div>
+          <LocationAutocomplete value={location} onChange={v => setLocation(v)} placeholder="City or Country" mode="city" />
         </Field>
         <Field label="Category">
           <select value={category} onChange={e => setCategory(e.target.value)} className={SELECT}>
@@ -306,24 +385,10 @@ function VisaForm() {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Field label="Your Nationality">
-          <select value={nationality} onChange={e => setNationality(e.target.value)} className={SELECT}>
-            <option value="">Select Country</option>
-            <option>Indian</option>
-            <option>American</option>
-            <option>British</option>
-            <option>UAE</option>
-            <option>Australian</option>
-            <option>Canadian</option>
-            <option>Singaporean</option>
-            <option>German</option>
-            <option>French</option>
-          </select>
+          <LocationAutocomplete value={nationality} onChange={v => setNationality(v)} placeholder="e.g. Indian, American" mode="country" />
         </Field>
         <Field label="Destination Country">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059] pointer-events-none" />
-            <input value={destination} onChange={e => setDestination(e.target.value)} type="text" placeholder="e.g. Schengen, USA, UK" className={cn(INPUT, "pl-9")} />
-          </div>
+          <LocationAutocomplete value={destination} onChange={v => setDestination(v)} placeholder="e.g. Schengen, USA, UK" mode="country" />
         </Field>
         <Field label="Travel Date">
           <input type="date" value={date} onChange={e => setDate(e.target.value)} className={INPUT} />

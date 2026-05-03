@@ -13,8 +13,16 @@ const NAV_LINKS = [
   { name: "Offers",   href: "/offers",             icon: Tag      },
 ];
 
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState as reactState } from "react";
+
 export function Navigation({ transparent = false }: { transparent?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = reactState(false);
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <motion.header
@@ -49,6 +57,13 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-4">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 rounded-full hover:bg-white/10 transition-all duration-200 text-white/80 hover:text-white"
+            aria-label="Toggle theme"
+          >
+            {mounted && (theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)}
+          </button>
           <Link
             href="/sign-in"
             className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/80 hover:text-white transition-colors"

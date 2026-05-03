@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { saveSearch } from "@/lib/local-history";
 import { Navigation } from "@/components/navigation";
 import { SearchWidget } from "@/components/search-widget";
 import { FlightCard } from "@/components/flight-card";
@@ -131,6 +132,8 @@ function SearchResults() {
     searchRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+import { toast } from "sonner";
+
   async function handleTrackPrice() {
     try {
       const r = await fetch("/api/alerts", {
@@ -139,9 +142,13 @@ function SearchResults() {
         body: JSON.stringify({ origin: from, destination: to, target_price: 50000, type }),
       });
       const d = await r.json();
-      if (d.success) alert("Odin is now tracking this route for you.");
-      else if (d.error === "Unauthorized") alert("Please sign in to track prices.");
-    } catch (e) { console.error(e); }
+      if (d.success) toast.success("Price alert set! Odin is now tracking this route for you.");
+      else if (d.error === "Unauthorized") toast.error("Please sign in to track prices.");
+      else toast.error(d.error || "Failed to set price alert.");
+    } catch (e) { 
+      console.error(e); 
+      toast.error("Something went wrong. Please try again.");
+    }
   }
 
   // Reset scroll + compact state every time a new search is submitted
@@ -149,6 +156,42 @@ function SearchResults() {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     setIsCompact(false);
   }, [type, from, to, depart, dest, checkIn, checkOut]);
+
+  // Save search to history once results are loaded (localStorage + Supabase)
+  useEffect(() => {
+    if (loading || !hasParams) return;
+
+    let entry: { type: "flight" | "hotel"; label: string; href: string; payload?: object } | null = null;
+
+    if (type === "flight" && from && to && depart) {
+      entry = {
+        type:  "flight",
+        label: `${from.toUpperCase()} → ${to.toUpperCase()} · ${depart}${returnD ? ` – ${returnD}` : ""} · ${adults} Adult${adults > 1 ? "s" : ""} · ${cabin}`,
+        href:  window.location.pathname + window.location.search,
+        payload: { fromCode: from, toCode: to, departDate: depart, returnDate: returnD, cabin, adults, resultsCount: offers.length },
+      };
+    } else if (type === "hotel" && dest && checkIn && checkOut) {
+      entry = {
+        type:  "hotel",
+        label: `Hotels in ${dest} · ${checkIn} – ${checkOut} · ${adults} Adult${adults > 1 ? "s" : ""}`,
+        href:  window.location.pathname + window.location.search,
+        payload: { destination: dest, checkIn, checkOut, adults, rooms, resultsCount: hotels.length },
+      };
+    }
+
+    if (!entry) return;
+
+    // 1. localStorage — instant, always works
+    saveSearch({ type: entry.type, label: entry.label, href: entry.href });
+
+    // 2. Supabase — cross-device sync, fire-and-forget
+    fetch("/api/search/history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: entry.type, label: entry.label, href: entry.href, ...entry.payload }),
+    }).catch(() => {}); // silently ignore errors
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   useEffect(() => {
     if (type === "flight" && from && to && depart) fetchFlights();
@@ -357,29 +400,14 @@ function SearchResults() {
               </div>
             )}
 
+import { FlightCardSkeleton, HotelCardSkeleton } from "@/components/skeletons";
+
             {loading && (
-              <div className="space-y-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-stone/10 p-5 animate-pulse">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-stone/10 rounded-xl" />
-                      <div className="flex-1 space-y-2">
-                        <div className="h-5 bg-stone/10 rounded w-1/3" />
-                        <div className="h-3 bg-stone/8 rounded w-1/5" />
-                      </div>
-                      <div className="space-y-2 text-right">
-                        <div className="h-6 bg-stone/10 rounded w-24" />
-                        <div className="h-9 bg-stone/10 rounded-xl w-20" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <p className="text-center text-stone text-xs flex items-center justify-center gap-2 pt-1">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  {type === "flight"
-                    ? "Checking live fares from IndiGo, Air India, Vistara, SpiceJet…"
-                    : "Finding the best hotels at your destination…"}
-                </p>
+              <div className="space-y-4">
+                {type === "flight" 
+                  ? Array.from({ length: 5 }).map((_, i) => <FlightCardSkeleton key={i} />)
+                  : Array.from({ length: 5 }).map((_, i) => <HotelCardSkeleton key={i} />)
+                }
               </div>
             )}
 

@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchWidget } from "@/components/search-widget";
+import { RecentSearches } from "@/components/recent-searches";
+import { PendingBookingBanner } from "@/components/pending-booking-banner";
 import {
   Sparkles, Plane, Hotel, Calendar, MessageSquare,
   ChevronRight, AlertCircle, Bell, Lock, Tag,
@@ -80,8 +82,11 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      {/* ── Pending booking recovery banner (client — reads localStorage) ── */}
+      <PendingBookingBanner />
+
       {/* ── Search widget ── */}
-      <div className="mb-8">
+      <div className="my-6">
         <SearchWidget />
       </div>
 
@@ -189,6 +194,9 @@ export default async function DashboardPage() {
               </div>
             </div>
           )}
+
+          {/* Recent searches (client — reads localStorage) */}
+          <RecentSearches />
 
           {/* Offers teaser */}
           <Link href="/offers">

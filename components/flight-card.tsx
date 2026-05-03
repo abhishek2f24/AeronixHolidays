@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Luggage, Lock, ChevronDown, ArrowRight, Wifi } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { savePendingBooking } from "@/lib/local-history";
 
 /* ── Airline logo map — Indian carriers first ── */
 const AIRLINE_LOGOS: Record<string, string> = {
@@ -54,7 +55,13 @@ export function FlightCard({ offer, adults = 1 }: { offer: any; adults?: number 
         setLocked(true);
       } else {
         const d = await res.json();
-        alert(d.error === "Unauthorized" ? "Sign in to lock a fare." : "Could not lock fare. Please try again.");
+        if (d.error === "Unauthorized") {
+          // Redirect to sign-in and come straight back to this search
+          const returnTo = window.location.pathname + window.location.search;
+          router.push(`/sign-in?redirect=${encodeURIComponent(returnTo)}`);
+        } else {
+          alert("Could not lock fare. Please try again.");
+        }
       }
     } catch {
       alert("Network error. Please try again.");
@@ -64,20 +71,63 @@ export function FlightCard({ offer, adults = 1 }: { offer: any; adults?: number 
   }
 
   function handleBook() {
-    // Use today's date as fallback when mock data has empty date
-    const departDate = offer.departure.date || new Date().toISOString().split("T")[0];
-    const skyscannerDate = departDate.replace(/-/g, "");
-    const searchUrl = `https://www.skyscanner.co.in/transport/flights/${offer.departure.airport.toLowerCase()}/${offer.arrival.airport.toLowerCase()}/${skyscannerDate}/?adults=${adults}&cabinclass=${offer.cabin.toLowerCase()}`;
-    router.push(`/redirect?type=flight&name=${offer.airline}&url=${encodeURIComponent(searchUrl)}`);
+    const checkoutUrl = `/checkout?type=flight&from=${offer.departure.airport}&to=${offer.arrival.airport}&date=${offer.departure.date}&cabin=${offer.cabin}&adults=${adults}&price=${offer.total_amount}`;
+
+    // Save booking intent — shown as "Resume booking" if user comes back
+    savePendingBooking({
+      type:       "flight",
+      label:      `${offer.airline} · ${offer.departure.airport} → ${offer.arrival.airport} · ${formatINR(offer.total_amount)}`,
+      partnerUrl: checkoutUrl,
+      searchHref: window.location.pathname + window.location.search,
+    });
+
+    router.push(checkoutUrl);
   }
 
   const logoSrc = AIRLINE_LOGOS[offer.carrier_code];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FlightReservation",
+    "provider": {
+      "@type": "Airline",
+      "name": offer.airline,
+      "iataCode": offer.carrier_code
+    },
+    "flightNumber": offer.flight_number,
+    "reservationStatus": "https://schema.org/ReservationConfirmed",
+    "underName": {
+      "@type": "Person",
+      "name": "Aeronix Guest"
+    },
+    "reservationFor": {
+      "@type": "Flight",
+      "flightNumber": offer.flight_number,
+      "departureAirport": {
+        "@type": "Airport",
+        "name": offer.departure.airport,
+        "iataCode": offer.departure.airport
+      },
+      "arrivalAirport": {
+        "@type": "Airport",
+        "name": offer.arrival.airport,
+        "iataCode": offer.arrival.airport
+      }
+    },
+    "price": offer.total_amount,
+    "priceCurrency": "INR"
+  };
+
   return (
-    <div className={cn(
-      "bg-white rounded-2xl border transition-shadow",
-      expanded ? "border-oxblood/30 shadow-md" : "border-stone/10 hover:shadow-sm"
-    )}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className={cn(
+        "bg-white dark:bg-stone-900 rounded-2xl border transition-shadow",
+        expanded ? "border-oxblood/30 shadow-md" : "border-stone/10 hover:shadow-sm"
+      )}>
       {/* ── Main row ── */}
       <div className="p-5 flex flex-wrap items-center gap-4">
         {/* Airline logo + name */}
@@ -235,5 +285,6 @@ export function FlightCard({ offer, adults = 1 }: { offer: any; adults?: number 
         </div>
       )}
     </div>
+    </>
   );
 }

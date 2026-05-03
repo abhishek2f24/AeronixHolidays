@@ -408,31 +408,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── WHY AERONIX ── */}
-      <section className="py-20 px-4 md:px-6 bg-white border-t border-stone-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-[#0A0B10] mb-3">Why Aeronix Holidays?</h2>
-            <p className="text-[#8C8782] text-base max-w-xl mx-auto">Millions of travelers trust us for their dream holidays. Here's why.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Shield,    title: "Best Price Guarantee",  desc: "We compare 500+ airlines and 1M+ hotels to find you the best deal every time.",        color: "bg-blue-50 text-blue-600"    },
-              { icon: Zap,       title: "Instant Confirmation",  desc: "Bookings confirmed in seconds. No waiting, no calls.",                                  color: "bg-amber-50 text-amber-600"  },
-              { icon: Headphones,title: "24/7 Travel Support",   desc: "Our travel experts are always available to help with any booking or emergency.",        color: "bg-oxblood/8 text-oxblood"   },
-              { icon: Star,      title: "2M+ Happy Travellers",  desc: "Trusted by travellers across India and 60+ countries for luxury and leisure trips.",     color: "bg-green-50 text-green-600"  },
-            ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="text-center p-6 rounded-2xl border border-[#E5E1DA] bg-[#FAF7F2] hover:shadow-md transition-shadow">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${color}`}>
-                  <Icon className="w-7 h-7" />
-                </div>
-                <h3 className="font-bold text-[#1A1A1A] mb-2">{title}</h3>
-                <p className="text-stone text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ── SPECIAL OFFERS BANNER ── */}
       <section className="py-12 px-4 md:px-6 bg-gradient-to-r from-[#6B1F2A] via-[#7A2030] to-[#8B2A38]">
