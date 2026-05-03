@@ -33,9 +33,9 @@ import {
 } from "lucide-react";
 
 const HERO_VIDEOS = [
+  "/hero-bag.jpg",
   "/hero-beach.jpeg",
   "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=1600&q=80", // Luxury Resort
-  "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1600&q=80", // Villa
 ];
 
 import { 
@@ -289,6 +289,165 @@ export default function HomePage() {
       </section>
 
 
+
+      {/* ── TRAVEL BY THEME ── */}
+      <section className="py-20 px-4 md:px-6 bg-[#FAF7F2] border-t border-[#E5E1DA]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-[#0A0B10] mb-3">Travel by Theme</h2>
+            <p className="text-[#8C8782] text-base">Find your perfect trip style</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { label: "Honeymoon",  emoji: "💑", color: "from-pink-100 to-rose-100",    href: "/packages?category=honeymoon" },
+              { label: "Adventure",  emoji: "🏔️", color: "from-emerald-50 to-teal-100", href: "/packages?category=adventure" },
+              { label: "Family",     emoji: "👨‍👩‍👧‍👦", color: "from-amber-50 to-orange-100", href: "/packages?category=family"    },
+              { label: "Beach",      emoji: "🏖️", color: "from-blue-50 to-cyan-100",    href: "/packages?category=beach"     },
+              { label: "Heritage",   emoji: "🏯", color: "from-stone-50 to-amber-50",  href: "/packages?category=heritage"  },
+              { label: "Luxury",     emoji: "✨", color: "from-[#C5A059]/10 to-amber-50", href: "/packages?category=luxury"  },
+            ].map(({ label, emoji, color, href }) => (
+              <Link key={label} href={href}>
+                <div className={`bg-gradient-to-br ${color} rounded-2xl p-6 text-center border border-white hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer`}>
+                  <div className="text-4xl mb-3">{emoji}</div>
+                  <p className="font-bold text-[#1A1A1A] text-sm">{label}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRENDING PACKAGES ── */}
+      <section className="py-20 px-4 md:px-6 bg-white border-t border-stone-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-10">
+            <div>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-[#0A0B10] mb-2">Trending Holiday Packages</h2>
+              <p className="text-[#8C8782] text-base">Best-selling trips, handpicked by our travel team</p>
+            </div>
+            <Link href="/packages">
+              <Button variant="ghost" className="text-[#6B1F2A] font-bold text-xs uppercase tracking-widest gap-2">
+                View All Packages <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { title: "Bali Bliss 6N/7D",          dest: "Bali, Indonesia",   price: "₹45,000",  oldPrice: "₹65,000",  tag: "Bestseller",  img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",  href: "/destinations/bali"     },
+              { title: "Maldives Escape 5N/6D",      dest: "Maldives",          price: "₹1,20,000", oldPrice: "₹1,60,000", tag: "Luxury",      img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80", href: "/destinations/maldives" },
+              { title: "Europe Highlights 10N",      dest: "Multi-city Europe", price: "₹1,85,000", oldPrice: "₹2,30,000", tag: "Popular",     img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80", href: "/destinations/paris"    },
+              { title: "Dubai Extravaganza 5N",      dest: "Dubai, UAE",        price: "₹60,000",  oldPrice: "₹80,000",  tag: "Trending",    img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80",  href: "/destinations/dubai"    },
+            ].map((pkg) => (
+              <Link key={pkg.title} href={pkg.href}>
+                <div className="group bg-white rounded-2xl border border-[#E5E1DA] overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+                  <div className="relative h-48 overflow-hidden">
+                    <img src={pkg.img} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <Badge className="absolute top-3 left-3 bg-[#6B1F2A] text-white border-transparent text-[9px] font-bold uppercase tracking-wider">{pkg.tag}</Badge>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs text-stone font-medium mb-1">{pkg.dest}</p>
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">{pkg.title}</h3>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-[#6B1F2A] font-black text-lg">{pkg.price}</span>
+                      <span className="text-stone text-xs line-through">{pkg.oldPrice}</span>
+                    </div>
+                    <p className="text-stone text-xs">per person · all inclusive</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── POPULAR FLIGHT ROUTES ── */}
+      <section className="py-16 px-4 md:px-6 bg-[#FAF7F2] border-t border-[#E5E1DA]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between gap-4 mb-8">
+            <div>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#0A0B10] mb-2">Popular Flight Routes</h2>
+              <p className="text-[#8C8782] text-sm">Lowest fares updated daily</p>
+            </div>
+            <Link href="/search?type=flight">
+              <Button variant="ghost" className="text-[#6B1F2A] font-bold text-xs uppercase tracking-widest gap-2 shrink-0">
+                All Flights <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { from: "Delhi",      to: "Dubai",     fromC: "DEL", toC: "DXB", price: "₹14,500", flag: "🇦🇪" },
+              { from: "Mumbai",     to: "London",    fromC: "BOM", toC: "LHR", price: "₹38,900", flag: "🇬🇧" },
+              { from: "Delhi",      to: "Bangkok",   fromC: "DEL", toC: "BKK", price: "₹8,200",  flag: "🇹🇭" },
+              { from: "Bangalore",  to: "Singapore", fromC: "BLR", toC: "SIN", price: "₹11,400", flag: "🇸🇬" },
+              { from: "Mumbai",     to: "Paris",     fromC: "BOM", toC: "CDG", price: "₹42,000", flag: "🇫🇷" },
+              { from: "Delhi",      to: "Maldives",  fromC: "DEL", toC: "MLE", price: "₹18,700", flag: "🇲🇻" },
+            ].map(({ from, to, fromC, toC, price, flag }) => (
+              <Link key={`${fromC}-${toC}`} href={`/search?type=flight&from=${fromC}&to=${toC}&depart=${new Date(Date.now() + 7*86400000).toISOString().split("T")[0]}&adults=1&cabin=ECONOMY`}>
+                <div className="group bg-white rounded-2xl border border-[#E5E1DA] p-4 hover:shadow-md hover:border-[#C5A059] transition-all cursor-pointer">
+                  <div className="text-2xl mb-2">{flag}</div>
+                  <p className="text-xs text-stone">{from} →</p>
+                  <p className="font-bold text-[#1A1A1A] text-sm">{to}</p>
+                  <p className="text-[#6B1F2A] font-black text-base mt-1">{price}</p>
+                  <p className="text-stone text-[10px]">onwards</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY AERONIX ── */}
+      <section className="py-20 px-4 md:px-6 bg-white border-t border-stone-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-[#0A0B10] mb-3">Why Aeronix Holidays?</h2>
+            <p className="text-[#8C8782] text-base max-w-xl mx-auto">Millions of travelers trust us for their dream holidays. Here's why.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Shield,    title: "Best Price Guarantee",  desc: "We compare 500+ airlines and 1M+ hotels to find you the best deal every time.",        color: "bg-blue-50 text-blue-600"    },
+              { icon: Zap,       title: "Instant Confirmation",  desc: "Bookings confirmed in seconds. No waiting, no calls.",                                  color: "bg-amber-50 text-amber-600"  },
+              { icon: Headphones,title: "24/7 Travel Support",   desc: "Our travel experts are always available to help with any booking or emergency.",        color: "bg-oxblood/8 text-oxblood"   },
+              { icon: Star,      title: "2M+ Happy Travellers",  desc: "Trusted by travellers across India and 60+ countries for luxury and leisure trips.",     color: "bg-green-50 text-green-600"  },
+            ].map(({ icon: Icon, title, desc, color }) => (
+              <div key={title} className="text-center p-6 rounded-2xl border border-[#E5E1DA] bg-[#FAF7F2] hover:shadow-md transition-shadow">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${color}`}>
+                  <Icon className="w-7 h-7" />
+                </div>
+                <h3 className="font-bold text-[#1A1A1A] mb-2">{title}</h3>
+                <p className="text-stone text-sm leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SPECIAL OFFERS BANNER ── */}
+      <section className="py-12 px-4 md:px-6 bg-gradient-to-r from-[#6B1F2A] via-[#7A2030] to-[#8B2A38]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <p className="text-[#C5A059] text-xs font-bold uppercase tracking-widest mb-2">Limited Time</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-2">
+              Use code <span className="bg-white/20 px-3 py-1 rounded-lg font-mono">AERONIX10</span>
+            </h2>
+            <p className="text-white/60 text-sm">Get 10% off on flights, hotels & holiday packages. New users only.</p>
+          </div>
+          <div className="flex gap-3 shrink-0">
+            <Link href="/offers">
+              <Button className="bg-[#C5A059] hover:bg-[#C5A059]/90 text-[#0A0B10] font-bold rounded-xl px-6 h-12 uppercase tracking-wider text-xs">
+                View All Offers
+              </Button>
+            </Link>
+            <Link href="/search">
+              <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl px-6 h-12 uppercase tracking-wider text-xs">
+                Book Now
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* ── APP DOWNLOAD SECTION ── */}
       <section className="py-24 px-6 bg-white">

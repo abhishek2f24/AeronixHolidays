@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Plane, Hotel, Palmtree, Tag, ChevronDown } from "lucide-react";
 
 const NAV_LINKS = [
-  { name: "Features", href: "#features" },
-  { name: "Destinations", href: "#destinations" },
+  { name: "Flights",  href: "/search?type=flight", icon: Plane    },
+  { name: "Hotels",   href: "/search?type=hotel",  icon: Hotel    },
+  { name: "Holidays", href: "/packages",            icon: Palmtree },
+  { name: "Offers",   href: "/offers",             icon: Tag      },
 ];
 
 export function Navigation({ transparent = false }: { transparent?: boolean }) {
@@ -21,48 +23,48 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
       className="absolute top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out px-4 md:px-6 py-4 bg-transparent"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center group pl-0 md:pl-6">
+        {/* Logo */}
+        <Link href="/" className="flex items-center group pl-0 md:pl-2">
           <img
             src="/logo3.png"
-            alt="Aeronix"
-            className="h-14 md:h-18 w-auto transition-transform duration-500 group-hover:scale-105"
+            alt="Aeronix Holidays"
+            className="h-12 md:h-16 w-auto transition-transform duration-500 group-hover:scale-105"
             style={{ mixBlendMode: "screen" }}
           />
         </Link>
 
-        {/* Desktop Navigation & Actions */}
-        <div className="hidden md:flex items-center gap-8 lg:gap-16">
-          <nav className="hidden lg:flex items-center gap-10">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-[11px] uppercase tracking-[0.2em] font-medium text-white/70 hover:text-[#C5A572] transition-colors duration-300 relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#C5A572] transition-all duration-300 group-hover:w-full" />
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-6 md:gap-8">
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-1 lg:gap-2">
+          {NAV_LINKS.map((link) => (
             <Link
-              href="/sign-in"
-              className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/80 hover:text-white transition-colors"
+              key={link.name}
+              href={link.href}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] uppercase tracking-[0.15em] font-bold text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200"
             >
-              Sign In
+              <link.icon className="w-3.5 h-3.5" />
+              {link.name}
             </Link>
-            <Link href="/signup">
-              <Button
-                className="bg-gradient-to-r from-[#6B1F2A] to-[#8B2A38] hover:to-[#A03545] text-white text-[11px] uppercase tracking-[0.2em] font-extrabold px-6 md:px-10 h-10 md:h-12 rounded-none border border-white/10 shadow-2xl transition-all duration-300 hover:scale-[1.05] active:scale-[0.98]"
-              >
-                Create Account
-              </Button>
-            </Link>
-          </div>
+          ))}
         </div>
 
-        {/* Mobile Hamburger */}
+        {/* Desktop CTAs */}
+        <div className="hidden md:flex items-center gap-4">
+          <Link
+            href="/sign-in"
+            className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/80 hover:text-white transition-colors"
+          >
+            Sign In
+          </Link>
+          <Link href="/sign-up">
+            <Button
+              className="bg-gradient-to-r from-[#6B1F2A] to-[#8B2A38] hover:to-[#A03545] text-white text-[11px] uppercase tracking-[0.2em] font-extrabold px-6 h-10 rounded-none border border-white/10 shadow-xl transition-all duration-300 hover:scale-[1.05]"
+            >
+              Free Sign Up
+            </Button>
+          </Link>
+        </div>
+
+        {/* Mobile hamburger */}
         <button
           className="md:hidden text-white p-2"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -72,7 +74,7 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -80,15 +82,16 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden absolute top-full left-0 right-0 bg-[#0A0B10]/95 backdrop-blur-md border-b border-white/10 px-6 py-6 flex flex-col gap-4"
+            className="md:hidden absolute top-full left-0 right-0 bg-[#0A0B10]/97 backdrop-blur-md border-b border-white/10 px-6 py-6 flex flex-col gap-3"
           >
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-[12px] uppercase tracking-[0.2em] font-medium text-white/70 hover:text-[#C5A572] transition-colors"
+                className="flex items-center gap-3 text-[12px] uppercase tracking-[0.2em] font-bold text-white/70 hover:text-white transition-colors py-1"
               >
+                <link.icon className="w-4 h-4" />
                 {link.name}
               </Link>
             ))}
@@ -98,9 +101,9 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
                   Sign In
                 </Button>
               </Link>
-              <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/sign-up" onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full bg-gradient-to-r from-[#6B1F2A] to-[#8B2A38] text-white text-[11px] uppercase tracking-[0.2em] font-extrabold">
-                  Create Account
+                  Free Sign Up
                 </Button>
               </Link>
             </div>
@@ -110,4 +113,3 @@ export function Navigation({ transparent = false }: { transparent?: boolean }) {
     </motion.header>
   );
 }
-

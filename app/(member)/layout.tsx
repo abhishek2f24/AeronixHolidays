@@ -3,14 +3,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Plane, LogOut } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { SidebarNavLinks, MobileBottomNav } from "@/components/sidebar-nav";
-
-const TIER_COLORS: Record<string, string> = {
-  voyager: "bg-stone/10 text-stone",
-  atlas:   "bg-oxblood/10 text-oxblood",
-  odyssey: "bg-gold/10 text-gold",
-};
 
 export default async function MemberLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -30,7 +23,6 @@ export default async function MemberLayout({ children }: { children: React.React
     .eq("id", user.id)
     .single();
 
-  const tier      = profile?.tier ?? "voyager";
   const name      = profile?.full_name ?? user.email?.split("@")[0] ?? "Traveler";
   const initials  = name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
@@ -63,7 +55,7 @@ export default async function MemberLayout({ children }: { children: React.React
             </div>
             <div className="min-w-0">
               <p className="text-ink text-sm font-medium truncate">{name}</p>
-              <Badge className={`text-[10px] px-1.5 py-0 capitalize ${TIER_COLORS[tier]}`}>{tier}</Badge>
+              <p className="text-stone text-[11px]">Aeronix member</p>
             </div>
           </div>
         </div>

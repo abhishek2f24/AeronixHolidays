@@ -92,15 +92,15 @@ export default function SettingsPage() {
         <p className="text-stone text-sm">Email and push notification preferences coming soon.</p>
       </div>
 
-      {/* Membership */}
+      {/* Travel Preferences */}
       <div className="bg-white rounded-2xl border border-stone/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <CreditCard className="w-4 h-4 text-oxblood" />
-          <h2 className="font-semibold text-ink">Membership</h2>
+          <h2 className="font-semibold text-ink">Travel Preferences</h2>
         </div>
-        <p className="text-stone text-sm mb-4">Manage your plan, billing, and usage.</p>
-        <Button variant="outline" className="rounded-xl border-stone/20 text-ink" onClick={() => router.push("/pricing")}>
-          View Plans & Pricing
+        <p className="text-stone text-sm mb-4">Update your travel style so Odin can give better recommendations.</p>
+        <Button variant="outline" className="rounded-xl border-stone/20 text-ink" onClick={() => router.push("/onboarding")}>
+          Retake Travel DNA Quiz
         </Button>
       </div>
 

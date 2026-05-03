@@ -1,12 +1,16 @@
 import { getPackages } from "@/lib/packages";
+import { SEED_PACKAGES } from "@/lib/seed-packages";
 import { Navigation } from "@/components/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-export default async function PackagesPage() {
-  const packages = await getPackages();
+export default async function PackagesPage({ searchParams }: { searchParams: Promise<{ destination?: string; category?: string }> }) {
+  const sp = await searchParams;
+  const dbPackages = await getPackages({ destination: sp.destination, category: sp.category });
+  // Fall back to curated seed packages when DB is empty
+  const packages = dbPackages.length > 0 ? dbPackages : SEED_PACKAGES;
 
   return (
     <div className="bg-[#F8F5F2] min-h-screen">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MessageSquare, CheckCircle, Clock } from "lucide-react";
+import { MessageSquare, CheckCircle, Clock, Phone, Mail, Headphones } from "lucide-react";
 
 const CATEGORIES = [
   "Booking assistance", "Flight disruption", "Hotel issue",
@@ -40,18 +40,18 @@ export default function ConciergePage() {
         <p className="text-stone">Our team responds personally to every request.</p>
       </div>
 
-      {/* SLA notice */}
+      {/* Support info */}
       <div className="grid sm:grid-cols-3 gap-3 mb-8">
         {[
-          { tier: "Odyssey", sla: "30 minutes", color: "text-gold" },
-          { tier: "Atlas",   sla: "4 hours",    color: "text-oxblood" },
-          { tier: "Voyager", sla: "24 hours",   color: "text-stone" },
-        ].map((t) => (
-          <div key={t.tier} className="bg-white rounded-xl border border-stone/10 p-4 flex items-center gap-3">
-            <Clock className={`w-4 h-4 shrink-0 ${t.color}`} />
+          { label: "Response Time",    value: "Within 24 hours",  icon: Clock,        color: "text-oxblood" },
+          { label: "Available",        value: "Mon–Sat 9am–9pm",  icon: Headphones,   color: "text-blue-600" },
+          { label: "Emergency",        value: "WhatsApp 24/7",    icon: Phone,        color: "text-green-600" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="bg-white rounded-xl border border-stone/10 p-4 flex items-center gap-3">
+            <Icon className={`w-4 h-4 shrink-0 ${color}`} />
             <div>
-              <p className="text-ink text-xs font-semibold">{t.tier}</p>
-              <p className="text-stone text-xs">{t.sla} response</p>
+              <p className="text-ink text-xs font-semibold">{label}</p>
+              <p className="text-stone text-xs">{value}</p>
             </div>
           </div>
         ))}
