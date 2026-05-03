@@ -67,21 +67,21 @@ export function SearchWidget() {
       
       <div className="relative bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] border border-[#E5E1DA] overflow-hidden">
         
-        {/* Tabs Section - Architectural Integration */}
-        <div className="flex items-center bg-[#FAF7F2] border-b border-[#E5E1DA]">
+        {/* Tabs Section - horizontally scrollable on mobile */}
+        <div className="flex items-center bg-[#FAF7F2] border-b border-[#E5E1DA] overflow-x-auto scrollbar-hide">
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex items-center gap-2.5 px-8 py-5 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 relative",
+                "flex items-center gap-1.5 md:gap-2.5 px-4 md:px-8 py-3 md:py-5 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 relative shrink-0",
                 activeTab === tab.id
                   ? "text-[#6B1F2A] bg-white"
                   : "text-[#8C8782] hover:text-[#6B1F2A] hover:bg-white/40"
               )}
             >
               <tab.icon className={cn("w-3.5 h-3.5 transition-colors", activeTab === tab.id ? "text-[#C5A059]" : "text-current")} />
-              {tab.label}
+              <span className="whitespace-nowrap">{tab.label}</span>
               {activeTab === tab.id && (
                 <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C5A059]" />
               )}
@@ -90,9 +90,9 @@ export function SearchWidget() {
         </div>
 
         {/* Input Section */}
-        <div className="p-10 pb-8">
-          <div className="relative flex items-center group">
-            <div className="absolute left-7 text-[#C5A059] group-focus-within:scale-110 transition-transform duration-300">
+        <div className="p-4 pb-4 md:p-10 md:pb-8">
+          <div className="flex flex-col md:relative md:flex-row md:items-center group gap-3 md:gap-0">
+            <div className="hidden md:block absolute left-7 text-[#C5A059] group-focus-within:scale-110 transition-transform duration-300">
               <Sparkles className="w-7 h-7" />
             </div>
             <input
@@ -100,11 +100,11 @@ export function SearchWidget() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder={PLACEHOLDERS[placeholderIndex]}
-              className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl h-24 pl-20 pr-52 text-xl font-display text-[#1A1A1A] placeholder-[#8C8782]/40 focus:outline-none focus:ring-1 focus:ring-[#C5A059]/30 transition-all shadow-sm"
+              className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl h-14 md:h-24 px-4 md:pl-20 md:pr-52 text-base md:text-xl font-display text-[#1A1A1A] placeholder-[#8C8782]/40 focus:outline-none focus:ring-1 focus:ring-[#C5A059]/30 transition-all shadow-sm"
             />
-            <div className="absolute right-4">
-              <Button 
-                className="bg-gradient-to-r from-[#6B1F2A] to-[#8B2A38] hover:scale-[1.02] text-white h-16 px-12 rounded-lg font-bold uppercase tracking-[0.2em] text-xs shadow-xl border border-[#C5A059]/20 transition-all flex items-center gap-3"
+            <div className="md:absolute md:right-4 w-full md:w-auto">
+              <Button
+                className="w-full md:w-auto bg-gradient-to-r from-[#6B1F2A] to-[#8B2A38] hover:scale-[1.02] text-white h-12 md:h-16 px-6 md:px-12 rounded-lg font-bold uppercase tracking-[0.2em] text-xs shadow-xl border border-[#C5A059]/20 transition-all flex items-center justify-center gap-3"
                 onClick={() => router.push(`/plan?q=${encodeURIComponent(inputValue)}`)}
               >
                 Ask Odin <ArrowRight className="w-4 h-4" />
@@ -113,13 +113,13 @@ export function SearchWidget() {
           </div>
 
           {/* Quick Chips */}
-          <div className="flex flex-wrap items-center gap-3 mt-10">
-            <span className="text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#8C8782]/60 mr-4">Trending:</span>
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-4 md:mt-10">
+            <span className="text-[11px] uppercase tracking-[0.25em] font-extrabold text-[#8C8782]/60 mr-1 md:mr-4">Trending:</span>
             {QUICK_CHIPS.map((chip) => (
               <button
                 key={chip}
                 onClick={() => setInputValue(chip)}
-                className="px-6 py-3 rounded-lg border border-[#E5E1DA] bg-white text-[11px] font-bold tracking-wider text-[#6B1F2A] hover:border-[#C5A059] hover:bg-[#FAF7F2] hover:shadow-md transition-all"
+                className="px-4 md:px-6 py-2 md:py-3 rounded-lg border border-[#E5E1DA] bg-white text-[11px] font-bold tracking-wider text-[#6B1F2A] hover:border-[#C5A059] hover:bg-[#FAF7F2] hover:shadow-md transition-all"
               >
                 {chip}
               </button>

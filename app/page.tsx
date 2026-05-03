@@ -129,7 +129,7 @@ export default function HomePage() {
             transition={{ duration: 0.4, ease: "circOut" }}
             className="fixed top-0 left-0 right-0 z-[100] bg-[#FAF7F2] border-b border-[#7A6A5815] shadow-lg backdrop-blur-md"
           >
-            <div className="max-w-7xl mx-auto h-16 flex items-center justify-center gap-2 md:gap-8 px-6">
+            <div className="max-w-7xl mx-auto h-16 flex items-center overflow-x-auto scrollbar-hide gap-0 md:gap-8 px-2 md:px-6 justify-start md:justify-center">
               <div className="flex items-center gap-2 px-3 py-2 text-[#6B1F2A] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
                 <Sparkles className="w-3.5 h-3.5 text-[#C5A572]" />
                 Ask Odin AI
@@ -195,7 +195,7 @@ export default function HomePage() {
                 Private AI Concierge
               </Badge>
             </div>
-            <h1 className="font-display text-5xl md:text-7xl font-semibold text-white leading-[1.1] tracking-[0.02em] mb-8">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-7xl font-semibold text-white leading-[1.1] tracking-[0.02em] mb-8">
               Luxury Travel, Globally Curated.<br />
               <span className="text-[#C5A059]">Seamlessly Delivered.</span>
             </h1>
@@ -217,11 +217,11 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.5 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-12 text-white/30 text-[10px] uppercase tracking-[0.3em] font-bold"
+          className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-wrap items-center justify-center gap-4 md:gap-12 text-white/30 text-[10px] uppercase tracking-[0.3em] font-bold w-full px-6"
         >
-          <span className="flex items-center gap-2 hover:text-[#C5A572] transition-colors cursor-default"><Shield className="w-3 h-3" /> No Booking Fees</span>
-          <span className="flex items-center gap-2 hover:text-[#C5A572] transition-colors cursor-default"><Zap className="w-3 h-3" /> Real-time Intel</span>
-          <span className="flex items-center gap-2 hover:text-[#C5A572] transition-colors cursor-default"><Check className="w-3 h-3" /> Verified Partners</span>
+          <span className="flex items-center gap-2 hover:text-[#C5A572] transition-colors cursor-default whitespace-nowrap"><Shield className="w-3 h-3 shrink-0" /> No Booking Fees</span>
+          <span className="flex items-center gap-2 hover:text-[#C5A572] transition-colors cursor-default whitespace-nowrap"><Zap className="w-3 h-3 shrink-0" /> Real-time Intel</span>
+          <span className="flex items-center gap-2 hover:text-[#C5A572] transition-colors cursor-default whitespace-nowrap"><Check className="w-3 h-3 shrink-0" /> Verified Partners</span>
         </motion.div>
       </section>
 
@@ -263,13 +263,13 @@ export default function HomePage() {
             <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FAF7F2] to-transparent z-20 pointer-events-none rounded-r-full" />
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-12 flex items-center justify-center text-center gap-3 text-[18px] font-semibold tracking-[0.08em] text-[#7A2230] uppercase w-full"
+            className="mt-12 flex items-center justify-center text-center gap-3 text-sm md:text-[18px] font-semibold tracking-[0.04em] md:tracking-[0.08em] text-[#7A2230] uppercase w-full px-4"
           >
-            <CheckCircle2 className="w-6 h-6 text-[#7A2230] stroke-[1.5px] shrink-0" />
+            <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-[#7A2230] stroke-[1.5px] shrink-0" />
             <span>1,400+ Verified Suppliers Across 62 Countries</span>
           </motion.div>
         </div>
