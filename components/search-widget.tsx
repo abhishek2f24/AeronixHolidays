@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Plane, Hotel, Palmtree, Ticket,
   FileCheck, ArrowRight, MapPin, Search, Check,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
