@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
 import { saveSearch } from "@/lib/local-history";
+import { FlightCardSkeleton, HotelCardSkeleton } from "@/components/skeletons";
 import { Navigation } from "@/components/navigation";
 import { SearchWidget } from "@/components/search-widget";
 import { FlightCard } from "@/components/flight-card";
@@ -398,8 +399,6 @@ function SearchResults() {
                 <p className="text-stone text-sm">Enter your {type === "flight" ? "origin, destination and travel dates" : "destination and check-in/out dates"} to see results.</p>
               </div>
             )}
-
-import { FlightCardSkeleton, HotelCardSkeleton } from "@/components/skeletons";
 
             {loading && (
               <div className="space-y-4">
