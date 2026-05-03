@@ -275,7 +275,7 @@ function SearchResults() {
       {/* ── Full search form — in normal flow, NOT sticky ── */}
       <div ref={searchRef} className="pt-20 bg-white border-b border-stone/10 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
-          <SearchWidget />
+          <SearchWidget collapsible={hasParams} />
         </div>
       </div>
 

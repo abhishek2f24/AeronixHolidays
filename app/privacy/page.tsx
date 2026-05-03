@@ -52,7 +52,7 @@ export default function PrivacyPage() {
             </p>
           </section>
 
-          <section>
+          <section id="cookies">
             <h2 className="text-xl font-bold text-ink mb-4">5. Cookies</h2>
             <p>
               We use cookies and similar technologies to track activity on our service and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.

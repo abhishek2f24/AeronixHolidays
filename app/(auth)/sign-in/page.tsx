@@ -8,12 +8,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plane, Mail, Globe2 } from "lucide-react";
-import { Suspense } from "react";
+import { Phone, ArrowRight, ChevronDown, Globe2, Mail, Plane } from "lucide-react";
+import { COUNTRIES } from "@/lib/countries";
 
-import { Phone, ArrowRight } from "lucide-react";
-
-function SignInForm() {
+export default function SignInPage() {
   const router = useRouter();
   const params = useSearchParams();
   const redirect = params.get("redirect") || "/dashboard";
@@ -22,6 +20,7 @@ function SignInForm() {
   const [mode, setMode] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -45,13 +44,23 @@ function SignInForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    // Ensure phone starts with +
-    const formattedPhone = phone.startsWith("+") ? phone : `+91${phone}`;
+    
+    // Robust cleaning
+    let cleaned = phone.trim().replace(/[^\d]/g, "");
+    const fullPhone = `${countryCode}${cleaned}`;
+
     const { error } = await supabase.auth.signInWithOtp({
-      phone: formattedPhone,
+      phone: fullPhone,
     });
     setLoading(false);
-    if (error) { setError(error.message); return; }
+    if (error) { 
+      if (error.message.includes("unsupported")) {
+        setError("This phone number format is not supported or SMS provider is not configured. Try checking if your country is supported.");
+      } else {
+        setError(error.message);
+      }
+      return; 
+    }
     setSent(true);
     setVerifying(true);
   }
@@ -60,9 +69,11 @@ function SignInForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const formattedPhone = phone.startsWith("+") ? phone : `+91${phone}`;
+    const cleaned = phone.trim().replace(/[^\d]/g, "");
+    const fullPhone = `${countryCode}${cleaned}`;
+    
     const { data, error } = await supabase.auth.verifyOtp({
-      phone: formattedPhone,
+      phone: fullPhone,
       token: otp,
       type: "sms",
     });
@@ -179,16 +190,31 @@ function SignInForm() {
                 <form onSubmit={handlePhoneSubmit} className="space-y-4">
                   <div className="space-y-1.5">
                     <Label htmlFor="phone" className="text-[10px] uppercase tracking-widest font-bold text-stone">Mobile Number</Label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-stone font-medium">+91</span>
+                    <div className="flex gap-2">
+                      <div className="relative w-[110px] shrink-0">
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="w-full bg-white/50 border border-stone-200 rounded-xl h-11 px-3 text-sm appearance-none focus:ring-1 focus:ring-oxblood/20 outline-none cursor-pointer"
+                        >
+                          {COUNTRIES.map((c) => (
+                            <option key={`${c.code}-${c.name}`} value={c.code}>
+                              {c.flag} {c.code}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                          <ChevronDown className="w-3 h-3" />
+                        </div>
+                      </div>
                       <Input
                         id="phone"
                         type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, ""))}
                         placeholder="99999 99999"
                         required
-                        className="h-11 rounded-xl border-stone-200 pl-12"
+                        className="h-11 rounded-xl border-stone-200"
                       />
                     </div>
                   </div>

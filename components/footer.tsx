@@ -52,20 +52,20 @@ const POPULAR = [
 
 /* ── Column 3: Company ── */
 const COMPANY = [
-  { label: "About Aeronix",     href: "/plan?q=Tell+me+about+Aeronix+Holidays" },
-  { label: "How It Works",      href: "/plan?q=How+does+Aeronix+work"          },
-  { label: "Pricing & Plans",   href: "/pricing"                                },
-  { label: "Contact Us",        href: "/concierge"                              },
-  { label: "Partner With Us",   href: "/concierge?subject=Partnership+enquiry"  },
+  { label: "About Aeronix",     href: "/about"          },
+  { label: "How It Works",      href: "/how-it-works"   },
+  { label: "Offers & Deals",    href: "/deals"          },
+  { label: "Contact Us",        href: "/contact"        },
+  { label: "Partner With Us",   href: "/partners"       },
 ];
 
 /* ── Column 4: Trust & Support ── */
 const TRUST = [
-  { label: "Customer Support",      href: "/concierge"                            },
-  { label: "Privacy Policy",        href: "#privacy-policy"                       },
-  { label: "Terms of Service",      href: "#terms-of-service"                     },
-  { label: "Refund & Cancellation", href: "#refund-policy"                        },
-  { label: "Cookie Policy",         href: "#cookie-policy"                        },
+  { label: "Customer Support",      href: "/contact"        },
+  { label: "Privacy Policy",        href: "/privacy"        },
+  { label: "Terms of Service",      href: "/terms"          },
+  { label: "Refund & Cancellation", href: "/refunds"        },
+  { label: "Cookie Policy",         href: "/privacy#cookies" },
 ];
 
 /* ── SEO link wall — only slugs that exist in destinations/[slug] ── */
