@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -438,7 +438,7 @@ function VisaForm() {
 
 import { useSearchParams } from "next/navigation";
 
-export function SearchWidget({ collapsible = false }: { collapsible?: boolean }) {
+function SearchWidgetInner({ collapsible = false }: { collapsible?: boolean }) {
   const searchParams = useSearchParams();
   const urlType = searchParams.get("type") || "odin";
   const [activeTab, setActiveTab] = useState(urlType);
@@ -575,5 +575,13 @@ export function SearchWidget({ collapsible = false }: { collapsible?: boolean })
         )}
       </div>
     </div>
+  );
+}
+
+export function SearchWidget(props: { collapsible?: boolean }) {
+  return (
+    <Suspense fallback={<div className="w-full h-24 bg-white/50 rounded-2xl animate-pulse" />}>
+      <SearchWidgetInner {...props} />
+    </Suspense>
   );
 }
