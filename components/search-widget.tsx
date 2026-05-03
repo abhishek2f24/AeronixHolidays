@@ -433,10 +433,10 @@ export function SearchWidget() {
       {/* AI Glowing Border */}
       <div className="absolute -inset-[1px] bg-gradient-to-r from-[#C5A572]/0 via-[#C5A572]/40 to-[#C5A572]/0 rounded-[32px] blur-sm animate-pulse pointer-events-none" />
 
-      <div className="relative bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] border border-[#E5E1DA] overflow-hidden">
+      <div className="relative bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] border border-[#E5E1DA]">
 
         {/* Tabs — scrollable on mobile */}
-        <div className="flex items-center bg-[#FAF7F2] border-b border-[#E5E1DA] overflow-x-auto scrollbar-hide">
+        <div className="flex items-center bg-[#FAF7F2] border-b border-[#E5E1DA] overflow-x-auto scrollbar-hide rounded-t-2xl">
           {TABS.map((tab) => (
             <button
               key={tab.id}
