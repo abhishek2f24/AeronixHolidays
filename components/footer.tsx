@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 /* ── Social SVG icons (inline) ── */
