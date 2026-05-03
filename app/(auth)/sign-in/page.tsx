@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Phone, ArrowRight, ChevronDown, Globe2, Mail, Plane } from "lucide-react";
 import { COUNTRIES } from "@/lib/countries";
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
   const params = useSearchParams();
   const redirect = params.get("redirect") || "/dashboard";
