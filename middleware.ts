@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED = ["/dashboard", "/trips", "/concierge", "/settings", "/onboarding"];
+const PROTECTED = ["/dashboard", "/trips", "/concierge", "/settings", "/onboarding", "/plan"];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -39,6 +39,10 @@ export async function middleware(request: NextRequest) {
   if (user && (path === "/sign-in" || path === "/sign-up")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
+
+  // Pass current pathname to server components via header
+  response.headers.set("x-pathname", request.nextUrl.pathname);
+  response.headers.set("x-search", request.nextUrl.search);
 
   return response;
 }

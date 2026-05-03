@@ -84,7 +84,7 @@ export default function OnboardingPage() {
   const current = STEPS[step];
   const isMulti = !!current?.multi;
   const isLast = step === STEPS.length - 1;
-  const progress = ((step) / STEPS.length) * 100;
+  const progress = ((step + 1) / STEPS.length) * 100;
 
   function handleSelect(value: any) {
     if (isMulti) {

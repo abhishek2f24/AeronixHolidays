@@ -16,13 +16,30 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "aeronix holidays — Your private travel firm",
+  title: "Aeronix Holidays | Bespoke Luxury Travel & Private AI Concierge",
   description:
-    "Plan, book, and manage every journey with an AI that knows your taste. Premium travel subscriptions starting at $480/year.",
+    "Experience the pinnacle of global exploration. Private jet charters, elite villa retreats, and curated luxury journeys managed by Odin, your personal AI concierge.",
   openGraph: {
-    title: "aeronix holidays",
-    description: "Your private travel firm. In your pocket.",
+    title: "Aeronix Holidays | Bespoke Luxury Travel",
+    description: "Your private travel firm. Redefining luxury through AI and bespoke expertise.",
+    url: "https://www.aeronixholidays.com",
+    siteName: "Aeronix Holidays",
+    images: [
+      {
+        url: "https://aeronixholidays.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Aeronix Holidays Luxury Travel",
+      },
+    ],
+    locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Aeronix Holidays | Bespoke Luxury Travel",
+    description: "Your private travel firm. Redefining luxury through AI and bespoke expertise.",
+    images: ["https://aeronixholidays.com/og-image.jpg"],
   },
 };
 

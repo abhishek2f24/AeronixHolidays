@@ -74,8 +74,8 @@ export default async function DashboardPage() {
             <p className="text-white/60 text-xs">Unlimited Odin AI, hotel perks, 0% FX card, and more.</p>
           </div>
           <Link href="/pricing">
-            <Button size="sm" className="bg-oxblood hover:bg-oxblood/90 text-white rounded-xl shrink-0">
-              Upgrade
+            <Button size="sm" className="bg-gold/90 hover:bg-gold text-ink rounded-xl shrink-0 font-bold">
+              Upgrade →
             </Button>
           </Link>
         </div>

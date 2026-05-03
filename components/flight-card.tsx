@@ -44,17 +44,31 @@ export function FlightCard({ offer, adults = 1 }: { offer: any; adults?: number 
 
   async function handleFareLock() {
     setLocking(true);
-    await fetch("/api/bookings/fare-lock", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ offer_token: offer.offer_token, price: offer.total_amount }),
-    });
-    setLocking(false);
-    setLocked(true);
+    try {
+      const res = await fetch("/api/bookings/fare-lock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer_token: offer.offer_token, price: offer.total_amount }),
+      });
+      if (res.ok) {
+        setLocked(true);
+      } else {
+        const d = await res.json();
+        alert(d.error === "Unauthorized" ? "Sign in to lock a fare." : "Could not lock fare. Please try again.");
+      }
+    } catch {
+      alert("Network error. Please try again.");
+    } finally {
+      setLocking(false);
+    }
   }
 
   function handleBook() {
-    router.push(`/book/flight?offer=${offer.offer_token}&adults=${adults}`);
+    // Use today's date as fallback when mock data has empty date
+    const departDate = offer.departure.date || new Date().toISOString().split("T")[0];
+    const skyscannerDate = departDate.replace(/-/g, "");
+    const searchUrl = `https://www.skyscanner.co.in/transport/flights/${offer.departure.airport.toLowerCase()}/${offer.arrival.airport.toLowerCase()}/${skyscannerDate}/?adults=${adults}&cabinclass=${offer.cabin.toLowerCase()}`;
+    router.push(`/redirect?type=flight&name=${offer.airline}&url=${encodeURIComponent(searchUrl)}`);
   }
 
   const logoSrc = AIRLINE_LOGOS[offer.carrier_code];

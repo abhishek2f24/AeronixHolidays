@@ -34,50 +34,48 @@ function YouTube() {
   );
 }
 
-/* ── Column 2: Popular Searches (SEO + utility) ── */
+/* ── Column 2: Popular Searches (working links only) ── */
 const POPULAR = [
-  { label: "Flights to Dubai",        href: "/search?type=flight&to=DXB" },
-  { label: "Flights to London",       href: "/search?type=flight&to=LHR" },
-  { label: "Flights to Bangkok",      href: "/search?type=flight&to=BKK" },
-  { label: "Hotels in Goa",           href: "/search?type=hotel&destination=GOA" },
-  { label: "Hotels in Dubai",         href: "/search?type=hotel&destination=DXB" },
-  { label: "Maldives Packages",       href: "/packages?destination=maldives" },
-  { label: "Kerala Honeymoon",        href: "/packages?destination=kerala" },
-  { label: "Europe Tour Packages",    href: "/packages?destination=europe" },
-  { label: "Thailand Family Trip",    href: "/packages?destination=thailand" },
-  { label: "Schengen Visa Help",      href: "/visa?region=europe" },
+  { label: "Flights to Dubai",     href: "/search?type=flight&from=DEL&to=DXB&depart=" },
+  { label: "Flights to London",    href: "/search?type=flight&from=DEL&to=LHR&depart=" },
+  { label: "Flights to Bangkok",   href: "/search?type=flight&from=DEL&to=BKK&depart=" },
+  { label: "Hotels in Goa",        href: "/search?type=hotel&destination=GOA&checkIn=&checkOut=" },
+  { label: "Hotels in Dubai",      href: "/search?type=hotel&destination=DXB&checkIn=&checkOut=" },
+  { label: "Maldives Packages",    href: "/packages?destination=maldives" },
+  { label: "Europe Tour Packages", href: "/packages?destination=europe"   },
+  { label: "Schengen Visa Help",   href: "/plan?q=Schengen+visa+requirements" },
+  { label: "Luxury Honeymoons",    href: "/packages?destination=maldives" },
+  { label: "Ask Odin AI",          href: "/plan" },
 ];
 
 /* ── Column 3: Company ── */
 const COMPANY = [
-  { label: "About Us",             href: "/about" },
-  { label: "How It Works",         href: "/how-it-works" },
-  { label: "Partner With Us",      href: "/partners" },
-  { label: "Careers",              href: "/careers" },
-  { label: "Travel Blog",          href: "/blog" },
-  { label: "Contact Us",           href: "/contact" },
-  { label: "Report an Issue",      href: "/support" },
-  { label: "Advertise With Us",    href: "/advertise" },
+  { label: "About Aeronix",     href: "/plan?q=Tell+me+about+Aeronix+Holidays" },
+  { label: "How It Works",      href: "/plan?q=How+does+Aeronix+work"          },
+  { label: "Pricing & Plans",   href: "/pricing"                                },
+  { label: "Contact Us",        href: "/concierge"                              },
+  { label: "Partner With Us",   href: "/concierge?subject=Partnership+enquiry"  },
 ];
 
 /* ── Column 4: Trust & Support ── */
 const TRUST = [
-  { label: "Customer Support",    href: "/support" },
-  { label: "Payment Security",    href: "/security" },
-  { label: "Privacy Policy",      href: "/privacy" },
-  { label: "Terms of Service",    href: "/terms" },
-  { label: "Refund & Cancellation", href: "/refunds" },
-  { label: "Sustainability",      href: "/sustainability" },
-  { label: "Cookie Policy",       href: "/cookies" },
+  { label: "Customer Support",      href: "/concierge"                            },
+  { label: "Privacy Policy",        href: "#privacy-policy"                       },
+  { label: "Terms of Service",      href: "#terms-of-service"                     },
+  { label: "Refund & Cancellation", href: "#refund-policy"                        },
+  { label: "Cookie Policy",         href: "#cookie-policy"                        },
 ];
 
-/* ── SEO link wall ── */
+/* ── SEO link wall — only slugs that exist in destinations/[slug] ── */
 const TOP_DESTINATIONS = [
-  "Paris Luxury Escapes", "Maldives Private Islands", "Santorini Honeymoons",
-  "Swiss Alps Retreats", "Kyoto Cultural Tours", "Dubai Royal Suites",
-  "Bali Wellness Journeys", "Amalfi Coast Villas", "Singapore City Breaks",
-  "Tokyo Luxury Stays", "New York Private Tours", "London Heritage Suites",
-  "Mauritius Beach Resorts", "Phuket Island Escapes", "Istanbul City Tours",
+  { label: "Paris Luxury Escapes",   slug: "paris"        },
+  { label: "Maldives Private Islands",slug: "maldives"    },
+  { label: "Santorini Honeymoons",   slug: "santorini"    },
+  { label: "Kyoto Cultural Tours",   slug: "kyoto"        },
+  { label: "Dubai Royal Suites",     slug: "dubai"        },
+  { label: "Bali Wellness Journeys", slug: "bali"         },
+  { label: "Amalfi Coast Villas",    slug: "amalfi-coast" },
+  { label: "London Heritage Suites", slug: "london"       },
 ];
 
 const ELITE_LINKS = [
@@ -226,33 +224,33 @@ export function Footer() {
         <div className="py-10 border-b border-white/[0.05]">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C5A572]/50 mb-4">Top Destinations</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C5A572] mb-4">Top Destinations</p>
               <div className="flex flex-wrap gap-x-3 gap-y-2">
-                {TOP_DESTINATIONS.map((dest, i) => (
-                  <span key={dest} className="flex items-center gap-3">
+                {TOP_DESTINATIONS.map(({ label, slug }, i) => (
+                  <span key={slug} className="flex items-center gap-3">
                     <Link
-                      href={`/destinations/${dest.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="text-[11px] text-white/22 hover:text-white/55 transition-colors duration-200"
+                      href={`/destinations/${slug}`}
+                      className="text-[11px] text-white/55 hover:text-white transition-colors duration-200"
                     >
-                      {dest}
+                      {label}
                     </Link>
-                    {i < TOP_DESTINATIONS.length - 1 && <span className="text-white/10 text-[10px]">•</span>}
+                    {i < TOP_DESTINATIONS.length - 1 && <span className="text-white/20 text-[10px]">•</span>}
                   </span>
                 ))}
               </div>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C5A572]/50 mb-4">Elite Travel</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C5A572] mb-4">Elite Travel</p>
               <div className="flex flex-wrap gap-x-3 gap-y-2">
                 {ELITE_LINKS.map((link, i) => (
                   <span key={link} className="flex items-center gap-3">
                     <Link
                       href={`/packages?category=${link.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="text-[11px] text-white/22 hover:text-white/55 transition-colors duration-200"
+                      className="text-[11px] text-white/55 hover:text-white transition-colors duration-200"
                     >
                       {link}
                     </Link>
-                    {i < ELITE_LINKS.length - 1 && <span className="text-white/10 text-[10px]">•</span>}
+                    {i < ELITE_LINKS.length - 1 && <span className="text-white/20 text-[10px]">•</span>}
                   </span>
                 ))}
               </div>

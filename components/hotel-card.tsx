@@ -48,14 +48,8 @@ export function HotelCard({
   const topAmenities = (hotel.amenities ?? []).slice(0, 4);
 
   function handleBook() {
-    const p = new URLSearchParams({
-      hotel:    hotel.id,
-      offer:    hotel.offer_id ?? "",
-      checkIn, checkOut,
-      adults:   String(adults),
-      rooms:    String(rooms),
-    });
-    router.push(`/book/hotel?${p}`);
+    const searchUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(hotel.name)}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&no_rooms=${rooms}`;
+    router.push(`/redirect?type=hotel&name=${hotel.name}&url=${encodeURIComponent(searchUrl)}`);
   }
 
   return (

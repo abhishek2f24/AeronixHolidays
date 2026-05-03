@@ -93,6 +93,8 @@ const DESTINATIONS = [
   { name: "Amalfi Coast", region: "Italy",        tag: "Coastal",   img: "https://images.unsplash.com/photo-1612698093158-e07ac200d44e?w=600&q=80" },
   { name: "Santorini",    region: "Greece",       tag: "Islands",   img: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80" },
   { name: "Paris",        region: "France",       tag: "Palaces",   img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80" },
+  { name: "Dubai",        region: "UAE",          tag: "Modern",    img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" },
+  { name: "London",       region: "UK",           tag: "Heritage",  img: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80" },
 ];
 
 export default function HomePage() {
@@ -129,31 +131,21 @@ export default function HomePage() {
             transition={{ duration: 0.4, ease: "circOut" }}
             className="fixed top-0 left-0 right-0 z-[100] bg-[#FAF7F2] border-b border-[#7A6A5815] shadow-lg backdrop-blur-md"
           >
-            <div className="max-w-7xl mx-auto h-16 flex items-center overflow-x-auto scrollbar-hide gap-0 md:gap-8 px-2 md:px-6 justify-start md:justify-center">
-              <div className="flex items-center gap-2 px-3 py-2 text-[#6B1F2A] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
-                <Sparkles className="w-3.5 h-3.5 text-[#C5A572]" />
-                Ask Odin AI
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 text-[#8C8782] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
-                <Plane className="w-3.5 h-3.5" />
-                Flights
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 text-[#8C8782] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
-                <Hotel className="w-3.5 h-3.5" />
-                Hotels
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 text-[#8C8782] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
-                <Palmtree className="w-3.5 h-3.5" />
-                Holidays
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 text-[#8C8782] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
-                <Ticket className="w-3.5 h-3.5" />
-                Experiences
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 text-[#8C8782] font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0">
-                <FileCheck className="w-3.5 h-3.5" />
-                Visa Support
-              </div>
+            <div className="max-w-7xl mx-auto h-16 flex items-center overflow-x-auto scrollbar-hide gap-0 md:gap-2 px-2 md:px-6 justify-start md:justify-center">
+              {[
+                { label: "Ask Odin AI", icon: Sparkles, href: "/plan",    active: true  },
+                { label: "Flights",     icon: Plane,    href: "/search?type=flight" },
+                { label: "Hotels",      icon: Hotel,    href: "/search?type=hotel"  },
+                { label: "Holidays",    icon: Palmtree, href: "/packages"            },
+                { label: "Experiences", icon: Ticket,   href: "/plan?q=experiences" },
+                { label: "Visa Support",icon: FileCheck,href: "/plan?q=visa+support"},
+              ].map(({ label, icon: Icon, href, active }) => (
+                <Link key={label} href={href}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-[10px] md:text-[11px] uppercase tracking-wider shrink-0 transition-colors hover:text-[#6B1F2A] hover:bg-[#6B1F2A]/5 ${active ? "text-[#6B1F2A]" : "text-[#8C8782]"}`}>
+                  <Icon className="w-3.5 h-3.5" />
+                  {label}
+                </Link>
+              ))}
             </div>
           </motion.div>
         )}

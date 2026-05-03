@@ -8,7 +8,7 @@ import { FlightCard } from "@/components/flight-card";
 import { HotelCard } from "@/components/hotel-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Hotel, SlidersHorizontal, X, ChevronDown, Loader2 } from "lucide-react";
+import { Plane, Hotel, SlidersHorizontal, X, ChevronDown, Loader2, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SortOption = "cheapest" | "fastest" | "earliest";
@@ -37,6 +37,21 @@ function SearchResults() {
   const [stopFilter,    setStopFilter]    = useState<string[]>([]);
   const [airlineFilter, setAirlineFilter] = useState<string[]>([]);
   const [starFilter,    setStarFilter]    = useState<number[]>([]);
+
+  async function handleTrackPrice() {
+    try {
+      const r = await fetch("/api/alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ origin: from, destination: to, target_price: 50000, type }),
+      });
+      const d = await r.json();
+      if (d.success) alert("Odin is now tracking this route for you.");
+      else if (d.error === "Unauthorized") alert("Please sign in to track prices.");
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   useEffect(() => {
     if (type === "flight" && from && to && depart) fetchFlights();
@@ -84,6 +99,7 @@ function SearchResults() {
     })
     .sort((a, b) => {
       if (sort === "cheapest") return a.total_amount - b.total_amount;
+      if (sort === "fastest") return a.duration.localeCompare(b.duration);
       if (sort === "earliest") return a.departure.time.localeCompare(b.departure.time);
       return 0;
     });
@@ -129,6 +145,16 @@ function SearchResults() {
               <Badge className="bg-oxblood/10 text-oxblood border-transparent text-xs">
                 {resultCount} result{resultCount !== 1 ? "s" : ""}
               </Badge>
+            )}
+            {!loading && type === "flight" && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleTrackPrice}
+                className="text-[10px] uppercase tracking-widest font-bold text-[#C5A572] hover:bg-[#C5A572]/5 h-7 px-3 rounded-full border border-[#C5A572]/20"
+              >
+                <Zap className="w-3 h-3 mr-1.5" /> Track Prices
+              </Button>
             )}
           </div>
           <div className="flex items-center gap-2">

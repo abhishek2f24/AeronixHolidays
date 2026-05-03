@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Send, User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MarkdownText } from "@/components/markdown";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -111,7 +112,9 @@ function PlanChat() {
                   : "bg-white border border-stone/10 text-ink rounded-tl-sm shadow-sm"
               )}
             >
-              {m.content}
+              {m.role === "assistant"
+                ? <MarkdownText content={m.content} />
+                : m.content}
             </div>
             {m.role === "user" && (
               <div className="w-8 h-8 rounded-full bg-stone/15 flex items-center justify-center shrink-0 mt-0.5">
