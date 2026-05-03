@@ -297,19 +297,21 @@ export default function HomePage() {
             <h2 className="font-display text-3xl md:text-4xl font-bold text-[#0A0B10] mb-3">Travel by Theme</h2>
             <p className="text-[#8C8782] text-base">Find your perfect trip style</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
-              { label: "Honeymoon",  emoji: "💑", color: "from-pink-100 to-rose-100",    href: "/packages?category=honeymoon" },
-              { label: "Adventure",  emoji: "🏔️", color: "from-emerald-50 to-teal-100", href: "/packages?category=adventure" },
-              { label: "Family",     emoji: "👨‍👩‍👧‍👦", color: "from-amber-50 to-orange-100", href: "/packages?category=family"    },
-              { label: "Beach",      emoji: "🏖️", color: "from-blue-50 to-cyan-100",    href: "/packages?category=beach"     },
-              { label: "Heritage",   emoji: "🏯", color: "from-stone-50 to-amber-50",  href: "/packages?category=heritage"  },
-              { label: "Luxury",     emoji: "✨", color: "from-[#C5A059]/10 to-amber-50", href: "/packages?category=luxury"  },
-            ].map(({ label, emoji, color, href }) => (
+              { label: "Honeymoon",  img: "/themes/honeymoon.png", href: "/packages?category=honeymoon" },
+              { label: "Adventure",  img: "/themes/adventure.png", href: "/packages?category=adventure" },
+              { label: "Family",     img: "/themes/family.png",    href: "/packages?category=family"    },
+              { label: "Beach",      img: "/themes/beach.png",     href: "/packages?category=beach"     },
+              { label: "Heritage",   img: "/themes/heritage.png",  href: "/packages?category=heritage"  },
+              { label: "Luxury",     img: "/themes/luxury.png",    href: "/packages?category=luxury"    },
+            ].map(({ label, img, href }) => (
               <Link key={label} href={href}>
-                <div className={`bg-gradient-to-br ${color} rounded-2xl p-6 text-center border border-white hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer`}>
-                  <div className="text-4xl mb-3">{emoji}</div>
-                  <p className="font-bold text-[#1A1A1A] text-sm">{label}</p>
+                <div className="group relative rounded-2xl overflow-hidden aspect-square border border-stone-200 hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer">
+                  <img src={img} alt={label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
+                    <p className="font-bold text-white text-sm uppercase tracking-widest">{label}</p>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -377,20 +379,28 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { from: "Delhi",      to: "Dubai",     fromC: "DEL", toC: "DXB", price: "₹14,500", flag: "🇦🇪" },
-              { from: "Mumbai",     to: "London",    fromC: "BOM", toC: "LHR", price: "₹38,900", flag: "🇬🇧" },
-              { from: "Delhi",      to: "Bangkok",   fromC: "DEL", toC: "BKK", price: "₹8,200",  flag: "🇹🇭" },
-              { from: "Bangalore",  to: "Singapore", fromC: "BLR", toC: "SIN", price: "₹11,400", flag: "🇸🇬" },
-              { from: "Mumbai",     to: "Paris",     fromC: "BOM", toC: "CDG", price: "₹42,000", flag: "🇫🇷" },
-              { from: "Delhi",      to: "Maldives",  fromC: "DEL", toC: "MLE", price: "₹18,700", flag: "🇲🇻" },
-            ].map(({ from, to, fromC, toC, price, flag }) => (
+              { from: "Delhi",      to: "Dubai",     fromC: "DEL", toC: "DXB", price: "₹14,500", code: "ae" },
+              { from: "Mumbai",     to: "London",    fromC: "BOM", toC: "LHR", price: "₹38,900", code: "gb" },
+              { from: "Delhi",      to: "Bangkok",   fromC: "DEL", toC: "BKK", price: "₹8,200",  code: "th" },
+              { from: "Bangalore",  to: "Singapore", fromC: "BLR", toC: "SIN", price: "₹11,400", code: "sg" },
+              { from: "Mumbai",     to: "Paris",     fromC: "BOM", toC: "CDG", price: "₹42,000", code: "fr" },
+              { from: "Delhi",      to: "Maldives",  fromC: "DEL", toC: "MLE", price: "₹18,700", code: "mv" },
+            ].map(({ from, to, fromC, toC, price, code }) => (
               <Link key={`${fromC}-${toC}`} href={`/search?type=flight&from=${fromC}&to=${toC}&depart=${new Date(Date.now() + 7*86400000).toISOString().split("T")[0]}&adults=1&cabin=ECONOMY`}>
-                <div className="group bg-white rounded-2xl border border-[#E5E1DA] p-4 hover:shadow-md hover:border-[#C5A059] transition-all cursor-pointer">
-                  <div className="text-2xl mb-2">{flag}</div>
-                  <p className="text-xs text-stone">{from} →</p>
-                  <p className="font-bold text-[#1A1A1A] text-sm">{to}</p>
-                  <p className="text-[#6B1F2A] font-black text-base mt-1">{price}</p>
-                  <p className="text-stone text-[10px]">onwards</p>
+                <div className="group bg-white rounded-2xl border border-[#E5E1DA] p-5 hover:shadow-lg hover:border-[#C5A059] transition-all cursor-pointer">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border border-stone-100 mb-4 shadow-sm">
+                    <img 
+                      src={`https://flagcdn.com/w80/${code}.png`} 
+                      alt={to} 
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-widest text-stone font-bold mb-1">{from} →</p>
+                  <p className="font-bold text-ink text-sm leading-tight">{to}</p>
+                  <div className="mt-3 pt-3 border-t border-stone-50 flex items-center justify-between">
+                    <p className="text-[#6B1F2A] font-black text-sm">{price}</p>
+                    <ArrowRight className="w-3 h-3 text-[#6B1F2A] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
                 </div>
               </Link>
             ))}
